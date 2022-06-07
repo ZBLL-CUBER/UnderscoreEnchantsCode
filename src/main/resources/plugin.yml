@@ -1,0 +1,49 @@
+api-version: 1.13
+name: UnderscoreEnchants
+version: ${project.version}
+main: com.roughlyunderscore.enchs.UnderscoreEnchants
+authors: [ Roughly_ ]
+description: A premium plugin that adds a TON of enchants in the game!
+awareness:
+  - !@UTF8
+depend:
+  - Vault
+commands:
+  underscoreenchants:
+    description: Core
+    aliases:
+      - ue
+      - underscoree
+      - uenchants
+      - uenchs
+      - underscoreenchs
+
+permissions:
+  underscoreenchants.enchantgui:
+    default: op
+    description: Allows you to use /ue enchanttable.
+  underscoreenchants.anvilgui:
+    default: op
+    description: Allows you to use /ue anvil.
+  underscoreenchants.log:
+    default: op
+    description: Allows you to use /ue log.
+  underscoreenchants.enchant:
+    default: op
+    description: Allows you to use /ue enchant.
+  underscoreenchants.toggle:
+    default: op
+    description: Allows you to use /ue toggle.
+  underscoreenchants.download:
+    default: op
+    description: Allows you to use /ue download.
+  underscoreenchants.*:
+    default: op
+    description: Allows you to use all the Underscore Enchants commands.
+    children:
+      - underscoreenchants.enchantgui
+      - underscoreenchants.anvilgui
+      - underscoreenchants.log
+      - underscoreenchants.enchant
+      - underscoreenchants.toggle
+      - underscoreenchants.download
