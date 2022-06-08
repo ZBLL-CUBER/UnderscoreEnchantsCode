@@ -1,7 +1,9 @@
-package com.roughlyunderscore.enchs.listeners;
+package com.roughlyunderscore.enchs.gui;
 
 import com.cryptomorin.xseries.*;
+import com.roughlyunderscore.enchantsapi.events.PreEnchantEvent;
 import com.roughlyunderscore.enchs.UnderscoreEnchants;
+import com.roughlyunderscore.enchs.util.Pair;
 import com.roughlyunderscore.enchs.util.general.Utils;
 import com.roughlyunderscore.enchs.util.holders.AnvilHolder;
 import com.roughlyunderscore.enchs.util.holders.EnchantHolder;
@@ -114,24 +116,41 @@ public class EnchantGUI implements Listener {
                         finalStack.setItemMeta(finalMeta);
                         item.getEnchantments().forEach(finalStack::addUnsafeEnchantment);
 
-                        inv.setItem(result, finalStack);
+                        //<editor-fold desc="Event preparation, jeez">
+                        Map<Enchantment, Integer> addedEnchantments0 = item.getEnchantments();
+                        Pair<Enchantment, Integer> addedEnchantments = Pair.empty();
+                        for (Map.Entry<Enchantment, Integer> entry : addedEnchantments0.entrySet()) {
+                            addedEnchantments = Pair.of(entry.getKey(), entry.getValue());
+                            // Technically "item" should only have one enchantment, so the pair should get it...
+                        }
+                        PreEnchantEvent pee = new PreEnchantEvent(pl, addedEnchantments.getKey(), addedEnchantments.getValue(), finalStack); // haha pee
+                        Bukkit.getPluginManager().callEvent(pee);
+                        //</editor-fold>
+                        if (!pee.isCancelled()) {
 
-                        inv.setItem(input, new ItemStack(XMaterial.PINK_STAINED_GLASS_PANE.parseMaterial()));
-                        inv.setItem(book1, new ItemStack(XMaterial.CYAN_STAINED_GLASS_PANE.parseMaterial()));
-                        inv.setItem(book2, new ItemStack(XMaterial.CYAN_STAINED_GLASS_PANE.parseMaterial()));
-                        inv.setItem(book3, new ItemStack(XMaterial.CYAN_STAINED_GLASS_PANE.parseMaterial()));
+                            inv.setItem(result, pee.getItem());
 
-                        if (plugin.getConfig().getBoolean("fireworks-on-enchants")) {
-                            Location l = pl.getLocation();
-                            Firework fw = (Firework) l.getWorld().spawnEntity(l, EntityType.FIREWORK);
-                            FireworkMeta fwmeta = fw.getFireworkMeta();
-                            fwmeta.setPower(1);
-                            fwmeta.addEffect(FireworkEffect.builder().withColor(Color.fromRGB(
+                            inv.setItem(input, new ItemStack(XMaterial.PINK_STAINED_GLASS_PANE.parseMaterial()));
+                            inv.setItem(book1, new ItemStack(XMaterial.CYAN_STAINED_GLASS_PANE.parseMaterial()));
+                            inv.setItem(book2, new ItemStack(XMaterial.CYAN_STAINED_GLASS_PANE.parseMaterial()));
+                            inv.setItem(book3, new ItemStack(XMaterial.CYAN_STAINED_GLASS_PANE.parseMaterial()));
+
+                            if (plugin.getConfig().getBoolean("fireworks-on-enchants")) {
+                                Location l = pl.getLocation();
+                                Firework fw = (Firework) l.getWorld().spawnEntity(l, EntityType.FIREWORK);
+                                FireworkMeta fwmeta = fw.getFireworkMeta();
+                                fwmeta.setPower(1);
+                                fwmeta.addEffect(FireworkEffect.builder().withColor(Color.fromRGB(
                                     new Random().nextInt(255),
                                     new Random().nextInt(255),
                                     new Random().nextInt(255)
-                            )).trail(true).build());
-                            fw.setFireworkMeta(fwmeta);
+                                ))
+                                  .trail(true)
+                                  .flicker(true)
+                                  .with(FireworkEffect.Type.STAR)
+                                  .build());
+                                fw.setFireworkMeta(fwmeta);
+                            }
                         }
                     }
                 }

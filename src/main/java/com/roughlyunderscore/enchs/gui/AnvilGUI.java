@@ -1,6 +1,7 @@
-package com.roughlyunderscore.enchs.listeners;
+package com.roughlyunderscore.enchs.gui;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.roughlyunderscore.enchantsapi.events.EnchantmentsCombineEvent;
 import com.roughlyunderscore.enchs.UnderscoreEnchants;
 import com.roughlyunderscore.enchs.util.holders.AnvilHolder;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ import static com.roughlyunderscore.enchs.util.general.Utils.*;
 
 @AllArgsConstructor
 /*
-AnvilGUI is the hardest and the most bug-prone class in this entire project.
+AnvilGUI is the second hardest and the most bug-prone class in this entire project.
 It has been rewritten from scratch countless times.
 This time, I also left some comments when writing it, but I am not entirely sure about how correct they are.
  */
@@ -193,17 +194,22 @@ public class AnvilGUI implements Listener {
                     // making sure has enough levels
                     int enchants = newItem.getEnchantments().size() * 3 + 3;
                     if (player.getLevel() < enchants && player.getGameMode() != GameMode.CREATIVE) {
-                        player.spigot().sendMessage(ACTION_BAR, new TextComponent("&cNot enough levels (&6" + player.getLevel() + "/" + enchants + "&c levels)"));
+                        sendActionbar(player, "&cNot enough levels (&6" + player.getLevel() + "/" + enchants + "&c levels)");
                         return;
                     }
 
                     // final
-                    if (player.getGameMode() != GameMode.CREATIVE) player.setLevel(player.getLevel() - enchants);
+                    EnchantmentsCombineEvent ece = new EnchantmentsCombineEvent(player, newItem);
+                    Bukkit.getPluginManager().callEvent(ece);
+                    if (!ece.isCancelled()) {
+                        if (player.getGameMode() != GameMode.CREATIVE) player.setLevel(player.getLevel() - enchants);
 
-                    if (overlap) dropItem(player, book);
-                    top.setItem(result0, newItem);
-                    top.setItem(combined0, XMaterial.RED_STAINED_GLASS_PANE.parseItem());
-                    top.setItem(combinee0, XMaterial.RED_STAINED_GLASS_PANE.parseItem());
+                        if (overlap) dropItem(player, book);
+                        top.setItem(combined0, XMaterial.RED_STAINED_GLASS_PANE.parseItem());
+                        top.setItem(combinee0, XMaterial.RED_STAINED_GLASS_PANE.parseItem());
+                        top.setItem(result0, ece.getResult());
+                    }
+
                 }
 
                 // ingot & item

@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 
 import java.net.URL;
 
+import static com.roughlyunderscore.enchs.UnderscoreEnchants.STATIC_EMPTY;
 import static com.roughlyunderscore.enchs.util.general.PlayerUtils.*;
 
 @UtilityClass @SuppressWarnings({"unused", "deprecation"})
@@ -134,41 +135,41 @@ public class Utils {
      * @return the name in a form of {@link String}
      */
     public String getName(Enchantment ench) {
-        if (ench == XEnchantment.ARROW_DAMAGE.parseEnchantment()) return "Power";
-        else if (ench == XEnchantment.DAMAGE_ARTHROPODS.parseEnchantment()) return "Bane of Arthropods";
-        else if (ench == XEnchantment.ARROW_KNOCKBACK.parseEnchantment()) return "Punch";
-        else if (ench == XEnchantment.DAMAGE_ALL.parseEnchantment()) return "Sharpness";
-        else if (ench == XEnchantment.THORNS.parseEnchantment()) return "Thorns";
-        else if (ench == XEnchantment.WATER_WORKER.parseEnchantment()) return "Aqua Affinity";
-        else if (ench == XEnchantment.KNOCKBACK.parseEnchantment()) return "Knockback";
-        else if (ench == XEnchantment.ARROW_INFINITE.parseEnchantment()) return "Infinity";
-        else if (ench == XEnchantment.PROTECTION_ENVIRONMENTAL.parseEnchantment()) return "Protection";
-        else if (ench == XEnchantment.ARROW_FIRE.parseEnchantment()) return "Flame";
-        else if (ench == XEnchantment.SILK_TOUCH.parseEnchantment()) return "Silk Touch";
-        else if (ench == XEnchantment.PROTECTION_PROJECTILE.parseEnchantment()) return "Projectile Protection";
-        else if (ench == XEnchantment.PROTECTION_FIRE.parseEnchantment()) return "Fire Protection";
-        else if (ench == XEnchantment.PROTECTION_EXPLOSIONS.parseEnchantment()) return "Blast Protection";
-        else if (ench == XEnchantment.PROTECTION_FALL.parseEnchantment()) return "Feather Falling";
-        else if (ench == XEnchantment.OXYGEN.parseEnchantment()) return "Respiration";
-        else if (ench == XEnchantment.LURE.parseEnchantment()) return "Lure";
-        else if (ench == XEnchantment.LUCK.parseEnchantment()) return "Luck of the Sea";
-        else if (ench == XEnchantment.FIRE_ASPECT.parseEnchantment()) return "Fire Aspect";
-        else if (ench == XEnchantment.DEPTH_STRIDER.parseEnchantment()) return "Depth Strider";
-        else if (ench == XEnchantment.DAMAGE_UNDEAD.parseEnchantment()) return "Smite";
-        else if (ench == XEnchantment.DIG_SPEED.parseEnchantment()) return "Efficiency";
-        else if (ench == XEnchantment.LOOT_BONUS_BLOCKS.parseEnchantment()) return "Fortune";
-        else if (ench == XEnchantment.LOOT_BONUS_MOBS.parseEnchantment()) return "Looting";
-        else if (ench == XEnchantment.DURABILITY.parseEnchantment()) return "Unbreaking";
-        else if (ench == XEnchantment.VANISHING_CURSE.parseEnchantment()) return "Curse of Vanishing";
-        else if (ench == XEnchantment.BINDING_CURSE.parseEnchantment()) return "Curse of Binding";
-        else if (ench == XEnchantment.SWEEPING_EDGE.parseEnchantment()) return "Sweeping Edge";
-        else if (ench == XEnchantment.MENDING.parseEnchantment()) return "Mending";
-        else if (ench == XEnchantment.SOUL_SPEED.parseEnchantment()) return "Soul Speed";
-        else if (ench == XEnchantment.FROST_WALKER.parseEnchantment()) return "Frost Walker";
-        else if (ench == XEnchantment.RIPTIDE.parseEnchantment()) return "Riptide";
-        else if (ench == XEnchantment.IMPALING.parseEnchantment()) return "Impaling";
-        else if (ench == XEnchantment.LOYALTY.parseEnchantment()) return "Loyalty";
-        else if (ench == XEnchantment.CHANNELING.parseEnchantment()) return "Channeling";
+        if (ench == XEnchantment.ARROW_DAMAGE.getEnchant()) return "Power";
+        else if (ench == XEnchantment.DAMAGE_ARTHROPODS.getEnchant()) return "Bane of Arthropods";
+        else if (ench == XEnchantment.ARROW_KNOCKBACK.getEnchant()) return "Punch";
+        else if (ench == XEnchantment.DAMAGE_ALL.getEnchant()) return "Sharpness";
+        else if (ench == XEnchantment.THORNS.getEnchant()) return "Thorns";
+        else if (ench == XEnchantment.WATER_WORKER.getEnchant()) return "Aqua Affinity";
+        else if (ench == XEnchantment.KNOCKBACK.getEnchant()) return "Knockback";
+        else if (ench == XEnchantment.ARROW_INFINITE.getEnchant()) return "Infinity";
+        else if (ench == XEnchantment.PROTECTION_ENVIRONMENTAL.getEnchant()) return "Protection";
+        else if (ench == XEnchantment.ARROW_FIRE.getEnchant()) return "Flame";
+        else if (ench == XEnchantment.SILK_TOUCH.getEnchant()) return "Silk Touch";
+        else if (ench == XEnchantment.PROTECTION_PROJECTILE.getEnchant()) return "Projectile Protection";
+        else if (ench == XEnchantment.PROTECTION_FIRE.getEnchant()) return "Fire Protection";
+        else if (ench == XEnchantment.PROTECTION_EXPLOSIONS.getEnchant()) return "Blast Protection";
+        else if (ench == XEnchantment.PROTECTION_FALL.getEnchant()) return "Feather Falling";
+        else if (ench == XEnchantment.OXYGEN.getEnchant()) return "Respiration";
+        else if (ench == XEnchantment.LURE.getEnchant()) return "Lure";
+        else if (ench == XEnchantment.LUCK.getEnchant()) return "Luck of the Sea";
+        else if (ench == XEnchantment.FIRE_ASPECT.getEnchant()) return "Fire Aspect";
+        else if (ench == XEnchantment.DEPTH_STRIDER.getEnchant()) return "Depth Strider";
+        else if (ench == XEnchantment.DAMAGE_UNDEAD.getEnchant()) return "Smite";
+        else if (ench == XEnchantment.DIG_SPEED.getEnchant()) return "Efficiency";
+        else if (ench == XEnchantment.LOOT_BONUS_BLOCKS.getEnchant()) return "Fortune";
+        else if (ench == XEnchantment.LOOT_BONUS_MOBS.getEnchant()) return "Looting";
+        else if (ench == XEnchantment.DURABILITY.getEnchant()) return "Unbreaking";
+        else if (ench == XEnchantment.VANISHING_CURSE.getEnchant()) return "Curse of Vanishing";
+        else if (ench == XEnchantment.BINDING_CURSE.getEnchant()) return "Curse of Binding";
+        else if (ench == XEnchantment.SWEEPING_EDGE.getEnchant()) return "Sweeping Edge";
+        else if (ench == XEnchantment.MENDING.getEnchant()) return "Mending";
+        else if (ench == XEnchantment.SOUL_SPEED.getEnchant()) return "Soul Speed";
+        else if (ench == XEnchantment.FROST_WALKER.getEnchant()) return "Frost Walker";
+        else if (ench == XEnchantment.RIPTIDE.getEnchant()) return "Riptide";
+        else if (ench == XEnchantment.IMPALING.getEnchant()) return "Impaling";
+        else if (ench == XEnchantment.LOYALTY.getEnchant()) return "Loyalty";
+        else if (ench == XEnchantment.CHANNELING.getEnchant()) return "Channeling";
         else return ench.getName();
     }
 
@@ -740,13 +741,13 @@ public class Utils {
      * encahnt <br>
      * banana banana banana banana
      */
-    public Pair<ItemStack, Map<Enchantment, Integer>> enchant(ItemStack item0, Enchantment enchantment, int level, UnderscoreEnchants plugin) {
+    public Pair<ItemStack, Map<Enchantment, Integer>> enchant(ItemStack item0, Enchantment enchantment, int level) {
         if (item0 == null || item0.getType() == Material.AIR)                                       // Deal will null and AIR
             return Pair.of(null, ImmutableMap.of(enchantment, level));                           // Return a pair of null item and same enchantments
 
         ItemStack item = item0.clone();                                                             // Clone the itemstack for further work
 
-        if (item.getEnchantments().size() >= plugin.getConfig().getInt("enchantmentLimit"))    // Can't enchant due to the limit
+        if (item.getEnchantments().size() >= UnderscoreEnchants.staticConfig.getInt("enchantmentLimit")) // Can't enchant due to the limit
             return Pair.of(item, ImmutableMap.of(enchantment, level));                              // Return a pair of same item and same enchantments
 
 
@@ -778,18 +779,17 @@ public class Utils {
      * Enchant an {@link ItemStack} with multiple {@link Enchantment}s.
      * @param item an {@link ItemStack} to enchant
      * @param enchantments a {@link Map}, consisting of {@link Enchantment}s and their levels
-     * @param plugin a valid {@link UnderscoreEnchants} instance
      * @return a {@link Pair} of the (possibly) enchanted {@link ItemStack} and the leftover {@link Enchantment}s along with their levels. If the amount of
      * enchantments does not exceed the limit, the {@link Map} will be empty.
      */
-    public Pair<ItemStack, Map<Enchantment, Integer>> enchant(ItemStack item, Map<Enchantment, Integer> enchantments, UnderscoreEnchants plugin) {
+    public Pair<ItemStack, Map<Enchantment, Integer>> enchant(ItemStack item, Map<Enchantment, Integer> enchantments) {
         if (item == null || item.getType() == Material.AIR)                                         // Deal will null and AIR
             return Pair.of(null, enchantments);                                                  // Return a pair of null item and same enchantments
 
         Map<Enchantment, Integer> leftovers = new HashMap<>();                                      // Prepare a leftovers storage
 
         for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-            Pair<ItemStack, Map<Enchantment, Integer>> pair = enchant(item, entry.getKey(), entry.getValue(), plugin);
+            Pair<ItemStack, Map<Enchantment, Integer>> pair = enchant(item, entry.getKey(), entry.getValue());
             if (pair.getValue() != null) leftovers.putAll(pair.getValue());                         // An enchantment iteration resulted in non-null (has leftovers);
                                                                                                     // need to put everything in the leftovers storage
             else item = pair.getKey();
@@ -960,7 +960,53 @@ public class Utils {
         return !fromRotation.equals(toRotation) && !isByJump(event);
     }
 
-    public static void downloadWithJavaNIO(String fileURL, String localFilename, UnderscoreEnchants plugin) throws MalformedURLException {
+
+    /**
+     * Parses an enchantment by name and makes sure that it fits the level restrictions.
+     * @param name the enchantment name
+     * @param level the suggested level
+     * @param unrestricted whether the level should bypass the restrictions or not (true if should)
+     * @return the parsed enchantment, or {@code UnderscoreEnchants.STATIC_EMPTY} (identical to EMPTY) if such enchantment doesn't exist or if the level boundaries are broken
+     */
+    public DetailedEnchantment parseEnchantment(String name, int level, boolean unrestricted) {
+        DetailedEnchantment ench = parseEnchantment(name);
+
+        if (!unrestricted && (level < ench.getEnchantment().getStartLevel() || level > ench.getEnchantment().getMaxLevel())) {
+            return STATIC_EMPTY;
+        }
+
+        else return new DetailedEnchantment(ench.getKey());
+    }
+
+    /**
+     * Parses an enchantment by name.
+     * @param name the enchantment name
+     * @return the enchantment, or {@code UnderscoreEnchants.STATIC_EMPTY} (identical to EMPTY) if such enchantment doesn't exist
+     */
+    public DetailedEnchantment parseEnchantment(String name) {
+
+        if (UnderscoreEnchants.staticEnchantmentData.stream().noneMatch(ench -> ench.getCommandName().equalsIgnoreCase(name))) {
+            if (Arrays.stream(Enchantment.values()).noneMatch(ench -> getName(ench).replace(" ", "_").equalsIgnoreCase(name)))
+                return STATIC_EMPTY; // returns the placeholder if there's no enchantment with such name
+        }
+
+        Enchantment ench;
+
+        Optional<DetailedEnchantment> optional = UnderscoreEnchants.staticEnchantmentData.stream().filter(enchn -> enchn.getCommandName().equalsIgnoreCase(name)).findFirst();
+        if (optional.isPresent()) {
+            ench = optional.get().getEnchantment(); // sets the enchantment to the received one (this is a custom enchantment)
+        } else {
+            Optional<Enchantment> opt = Arrays.stream(Enchantment.values()).filter(enchn -> getName(enchn).replace(" ", "_").equalsIgnoreCase(name)).findFirst();
+            if (opt.isPresent()) ench = opt.get(); // sets the enchantment to the received one (this is a default enchantment)
+            else return STATIC_EMPTY; // returns the placeholder if such enchantment somehow does not exist
+        }
+
+        return new DetailedEnchantment(ench.getKey()); // returns a DetailedEnchantment object, built from the received enchantment
+
+    }
+
+
+    public void downloadWithJavaNIO(String fileURL, String localFilename, UnderscoreEnchants plugin) throws MalformedURLException {
         // github.com/eugenp/tutorials/blob/master/core-java-modules/core-java-networking-2/src/main/java/com/baeldung/download/FileDownload.java
 
         URL url = new URL(fileURL);

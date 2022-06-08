@@ -10,6 +10,7 @@ import com.roughlyunderscore.enchs.util.enums.Permissions;
 import com.roughlyunderscore.enchs.util.holders.AnvilHolder;
 import com.roughlyunderscore.enchs.util.holders.EnchantHolder;
 import static com.roughlyunderscore.enchs.registration.Register.*;
+import static com.roughlyunderscore.enchs.util.general.Utils.*;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -172,8 +173,8 @@ public class UnderscoreEnchantsCommand implements CommandExecutor {
                     }
 
                     // Check for the enchantment existence and it being inside the level bounds
-                    DetailedEnchantment ench = parseEnchantment(name, level, plugin);
-                    if (ench.equals(plugin.EMPTY)) {
+                    DetailedEnchantment ench = parseEnchantment(name, level, false);
+                    if (ench.equals(plugin.EMPTY) || ench.equals(UnderscoreEnchants.STATIC_EMPTY)) {
                         sender.sendMessage(plugin.getMessages().WRONG_NAME);
                         return false;
                     }
@@ -184,7 +185,7 @@ public class UnderscoreEnchantsCommand implements CommandExecutor {
                     }
 
                     // Enchant the item
-                    Pair<ItemStack, Map<Enchantment, Integer>> pair = enchant(handItem, Map.of(ench.getEnchantment(), level), plugin);
+                    Pair<ItemStack, Map<Enchantment, Integer>> pair = enchant(handItem, ench.getEnchantment(), level);
                     if (!pair.getValue().isEmpty()) {
                         playSound(player, XSound.ENTITY_VILLAGER_NO);
                         return false;
@@ -213,7 +214,8 @@ public class UnderscoreEnchantsCommand implements CommandExecutor {
                     PersistentDataContainer pdc = player.getPersistentDataContainer();
 
                     // Attempt to parse the proposed enchantment
-                    if (parseEnchantment(args[1], plugin) == plugin.EMPTY) {
+                    DetailedEnchantment parsed = parseEnchantment(args[1]);
+                    if (parsed.equals(plugin.EMPTY) || parsed.equals(UnderscoreEnchants.STATIC_EMPTY)) {
                         player.sendMessage(plugin.getMessages().WRONG_NAME);
                         return false;
                     }
@@ -225,7 +227,7 @@ public class UnderscoreEnchantsCommand implements CommandExecutor {
                     }
 
                     // Initialize the variables for toggling
-                    DetailedEnchantment detailedEnchantment = parseEnchantment(args[1], plugin);
+                    DetailedEnchantment detailedEnchantment = parseEnchantment(args[1]);
                     String state = args[2];
 
                     // Toggle the enchantment
@@ -330,52 +332,6 @@ public class UnderscoreEnchantsCommand implements CommandExecutor {
         }
 
         return false;
-    }
-
-
-    /**
-     * Parses an enchantment by name and makes sure that it fits the level restrictions.
-     * @param name the enchantment name
-     * @param level the suggested level
-     * @param plugin UnderscoreEnchants
-     * @return the parsed enchantment, or {@code UnderscoreEnchants.EMPTY} if such enchantment doesn't exist or if the level boundaries are broken
-     */
-    protected DetailedEnchantment parseEnchantment(String name, int level, UnderscoreEnchants plugin) {
-        DetailedEnchantment ench = parseEnchantment(name, plugin);
-
-        if (level < ench.getEnchantment().getStartLevel() || level > ench.getEnchantment().getMaxLevel()) {
-            return plugin.EMPTY;
-        }
-
-        else return new DetailedEnchantment(ench.getKey());
-    }
-
-    /**
-     * Parses an enchantment by name.
-     * @param name the enchantment name
-     * @param plugin UnderscoreEnchants
-     * @return the enchantment, or {@code UnderscoreEnchants.EMPTY} if such enchantment doesn't exist
-     */
-    protected DetailedEnchantment parseEnchantment(String name, UnderscoreEnchants plugin) {
-
-        if (plugin.getEnchantmentData().stream().noneMatch(ench -> ench.getCommandName().equalsIgnoreCase(name))) {
-            if (Arrays.stream(Enchantment.values()).noneMatch(ench -> getName(ench).replace(" ", "_").equalsIgnoreCase(name)))
-                return plugin.EMPTY; // returns the placeholder if there's no enchantment with such name
-        }
-
-        Enchantment ench;
-
-        Optional<DetailedEnchantment> optional = plugin.getEnchantmentData().stream().filter(enchn -> enchn.getCommandName().equalsIgnoreCase(name)).findFirst();
-        if (optional.isPresent()) {
-            ench = optional.get().getEnchantment(); // sets the enchantment to the received one (this is a custom enchantment)
-        } else {
-            Optional<Enchantment> opt = Arrays.stream(Enchantment.values()).filter(enchn -> getName(enchn).replace(" ", "_").equalsIgnoreCase(name)).findFirst();
-            if (opt.isPresent()) ench = opt.get(); // sets the enchantment to the received one (this is a default enchantment)
-            else return plugin.EMPTY; // returns the placeholder if such enchantment somehow does not exist
-        }
-
-        return new DetailedEnchantment(ench.getKey()); // returns a DetailedEnchantment object, built from the received enchantment
-
     }
 
     /**

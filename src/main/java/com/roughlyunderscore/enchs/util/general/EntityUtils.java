@@ -124,10 +124,10 @@ public class EntityUtils {
 		}
 	}
 	public void addPermanentPotion(Entity entity, XPotion effect) {
-		addPermanentPotion(entity, effect.parsePotionEffectType());
+		addPermanentPotion(entity, effect.getPotionEffectType());
 	}
 	public void addPermanentPotion(Entity entity, String effect) {
-		addPermanentPotion(entity, XPotion.valueOf(effect).parsePotionEffectType());
+		addPermanentPotion(entity, XPotion.valueOf(effect).getPotionEffectType());
 	}
 
 	public void addPermanentPotion(Entity entityy, PotionEffectType effect, int amplifier) {
@@ -137,10 +137,10 @@ public class EntityUtils {
 		}
 	}
 	public void addPermanentPotion(Entity entity, XPotion effect, int amplifier) {
-		addPermanentPotion(entity, effect.parsePotionEffectType(), amplifier);
+		addPermanentPotion(entity, effect.getPotionEffectType(), amplifier);
 	}
 	public void addPermanentPotion(Entity entity, String effect, int amplifier) {
-		addPermanentPotion(entity, XPotion.valueOf(effect).parsePotionEffectType(), amplifier);
+		addPermanentPotion(entity, XPotion.valueOf(effect).getPotionEffectType(), amplifier);
 	}
 
 	public void addPotion(Entity entityy, PotionEffectType effect, int ticks) {
@@ -150,10 +150,10 @@ public class EntityUtils {
 		}
 	}
 	public void addPotion(Entity entity, XPotion effect, int ticks) {
-		addPotion(entity, effect.parsePotionEffectType(), ticks, 0);
+		addPotion(entity, effect.getPotionEffectType(), ticks, 0);
 	}
 	public void addPotion(Entity entity, String effect, int ticks) {
-		addPotion(entity, XPotion.valueOf(effect).parsePotionEffectType(), ticks, 0);
+		addPotion(entity, XPotion.valueOf(effect).getPotionEffectType(), ticks, 0);
 	}
 
 	public void addPotion(Entity entityy, PotionEffectType effect, int ticks, int amplifier) {
@@ -163,10 +163,10 @@ public class EntityUtils {
 		}
 	}
 	public void addPotion(Entity entity, XPotion effect, int ticks, int amplifier) {
-		addPotion(entity, effect.parsePotionEffectType(), ticks, amplifier);
+		addPotion(entity, effect.getPotionEffectType(), ticks, amplifier);
 	}
 	public void addPotion(Entity entity, String effect, int ticks, int amplifier) {
-		addPotion(entity, XPotion.valueOf(effect).parsePotionEffectType(), ticks, amplifier);
+		addPotion(entity, XPotion.valueOf(effect).getPotionEffectType(), ticks, amplifier);
 	}
 
 	public void removePotion(Entity entityy, PotionEffectType effect) {
@@ -176,10 +176,10 @@ public class EntityUtils {
 		}
 	}
 	public void removePotion(Entity entity, XPotion effect) {
-		removePotion(entity, effect.parsePotionEffectType());
+		removePotion(entity, effect.getPotionEffectType());
 	}
 	public void removePotion(Entity entity, String effect) {
-		removePotion(entity, XPotion.valueOf(effect).parsePotionEffectType());
+		removePotion(entity, XPotion.valueOf(effect).getPotionEffectType());
 	}
 
 	public void removeBuffs(Entity entityy, UnderscoreEnchants plugin) {

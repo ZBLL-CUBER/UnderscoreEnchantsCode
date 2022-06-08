@@ -15,6 +15,9 @@ import com.roughlyunderscore.enchs.util.data.DetailedEnchantment;
 import com.roughlyunderscore.enchs.util.data.Messages;
 import com.roughlyunderscore.enchs.util.Metrics;
 import static com.roughlyunderscore.enchs.registration.Register.*;
+
+import com.roughlyunderscore.enchs.gui.AnvilGUI;
+import com.roughlyunderscore.enchs.gui.EnchantGUI;
 import de.jeff_media.updatechecker.*;
 import lombok.Getter;
 import lombok.NonNull;
@@ -51,6 +54,7 @@ public final class UnderscoreEnchants extends JavaPlugin {
 	//</editor-fold>
 
 	@Getter public DetailedEnchantment EMPTY;
+	public static DetailedEnchantment STATIC_EMPTY;
 
 	//<editor-fold desc="Boring initialization of maps, lists, and generally used variables.">
 
@@ -70,6 +74,7 @@ public final class UnderscoreEnchants extends JavaPlugin {
 	public static List<Material> armorList = new ArrayList<>();
 	@Getter public List<Enchantment> allEnchs = new ArrayList<>();
 	@Getter	public List<DetailedEnchantment> enchantmentData = new ArrayList<>();
+	public static List<DetailedEnchantment> staticEnchantmentData = new ArrayList<>();
 
 	public static Map<UUID, Integer> gods = new HashMap<>();
 
@@ -91,6 +96,8 @@ public final class UnderscoreEnchants extends JavaPlugin {
 	public static ArrayList<Enchantment> tridentEnchantments = new ArrayList<>();
 
 	public static String serverVersion = Bukkit.getBukkitVersion();
+
+	public static FileConfiguration staticConfig;
 	//</editor-fold>
 	private void regTest() {
 		if (!serverVersion.contains("1.16") &&
@@ -440,10 +447,13 @@ public final class UnderscoreEnchants extends JavaPlugin {
 	@SneakyThrows
 	@Override
 	public void onEnable() {
-		EMPTY = new DetailedEnchantment(this);
 		//<editor-fold desc="Last initializations.">
+		EMPTY = new DetailedEnchantment(this);
+		STATIC_EMPTY = new DetailedEnchantment(this);
+		staticEnchantmentData.addAll(enchantmentData);
 		instance = this;
 		messages = new Messages(this);
+		staticConfig = getConfig();
 
 		saveDefaultConfig();
 		FileConfiguration config = this.getConfig();
@@ -575,6 +585,7 @@ public final class UnderscoreEnchants extends JavaPlugin {
 				cooldowns.removeIf(Cooldown::decrease);
 			}
 		}.runTaskTimer(this, 0, 20);
+
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -607,109 +618,109 @@ public final class UnderscoreEnchants extends JavaPlugin {
 
 	private void init() {
 		weaponEnchantments.addAll(Arrays.asList(
-			XEnchantment.DAMAGE_ALL.parseEnchantment(),
-			XEnchantment.DAMAGE_ARTHROPODS.parseEnchantment(),
-			XEnchantment.FIRE_ASPECT.parseEnchantment(),
-			XEnchantment.KNOCKBACK.parseEnchantment(),
-			XEnchantment.LOOT_BONUS_MOBS.parseEnchantment(),
-			XEnchantment.DAMAGE_UNDEAD.parseEnchantment(),
-			XEnchantment.DURABILITY.parseEnchantment(),
-			XEnchantment.MENDING.parseEnchantment(),
-			XEnchantment.SWEEPING_EDGE.parseEnchantment(),
-			XEnchantment.VANISHING_CURSE.parseEnchantment()
+			XEnchantment.DAMAGE_ALL.getEnchant(),
+			XEnchantment.DAMAGE_ARTHROPODS.getEnchant(),
+			XEnchantment.FIRE_ASPECT.getEnchant(),
+			XEnchantment.KNOCKBACK.getEnchant(),
+			XEnchantment.LOOT_BONUS_MOBS.getEnchant(),
+			XEnchantment.DAMAGE_UNDEAD.getEnchant(),
+			XEnchantment.DURABILITY.getEnchant(),
+			XEnchantment.MENDING.getEnchant(),
+			XEnchantment.SWEEPING_EDGE.getEnchant(),
+			XEnchantment.VANISHING_CURSE.getEnchant()
 		));
 		bowEnchantments.addAll(Arrays.asList(
-			XEnchantment.ARROW_FIRE.parseEnchantment(),
-			XEnchantment.ARROW_DAMAGE.parseEnchantment(),
-			XEnchantment.ARROW_KNOCKBACK.parseEnchantment(),
-			XEnchantment.ARROW_INFINITE.parseEnchantment(),
-			XEnchantment.DURABILITY.parseEnchantment(),
-			XEnchantment.MENDING.parseEnchantment(),
-			XEnchantment.VANISHING_CURSE.parseEnchantment()
+			XEnchantment.ARROW_FIRE.getEnchant(),
+			XEnchantment.ARROW_DAMAGE.getEnchant(),
+			XEnchantment.ARROW_KNOCKBACK.getEnchant(),
+			XEnchantment.ARROW_INFINITE.getEnchant(),
+			XEnchantment.DURABILITY.getEnchant(),
+			XEnchantment.MENDING.getEnchant(),
+			XEnchantment.VANISHING_CURSE.getEnchant()
 		));
 		toolEnchantments.addAll(Arrays.asList(
-			XEnchantment.DURABILITY.parseEnchantment(),
-			XEnchantment.DIG_SPEED.parseEnchantment(),
-			XEnchantment.LOOT_BONUS_BLOCKS.parseEnchantment(),
-			XEnchantment.SILK_TOUCH.parseEnchantment(),
-			XEnchantment.LURE.parseEnchantment(),
-			XEnchantment.LUCK.parseEnchantment(),
-			XEnchantment.MENDING.parseEnchantment(),
-			XEnchantment.VANISHING_CURSE.parseEnchantment()
+			XEnchantment.DURABILITY.getEnchant(),
+			XEnchantment.DIG_SPEED.getEnchant(),
+			XEnchantment.LOOT_BONUS_BLOCKS.getEnchant(),
+			XEnchantment.SILK_TOUCH.getEnchant(),
+			XEnchantment.LURE.getEnchant(),
+			XEnchantment.LUCK.getEnchant(),
+			XEnchantment.MENDING.getEnchant(),
+			XEnchantment.VANISHING_CURSE.getEnchant()
 		));
 		helmetEnchantments.addAll(Arrays.asList(
-			XEnchantment.WATER_WORKER.parseEnchantment(),
-			XEnchantment.PROTECTION_EXPLOSIONS.parseEnchantment(),
-			XEnchantment.PROTECTION_FIRE.parseEnchantment(),
-			XEnchantment.PROTECTION_PROJECTILE.parseEnchantment(),
-			XEnchantment.PROTECTION_ENVIRONMENTAL.parseEnchantment(),
-			XEnchantment.OXYGEN.parseEnchantment(),
-			XEnchantment.THORNS.parseEnchantment(),
-			XEnchantment.DURABILITY.parseEnchantment(),
-			XEnchantment.VANISHING_CURSE.parseEnchantment(),
-			XEnchantment.BINDING_CURSE.parseEnchantment(),
-			XEnchantment.MENDING.parseEnchantment()
+			XEnchantment.WATER_WORKER.getEnchant(),
+			XEnchantment.PROTECTION_EXPLOSIONS.getEnchant(),
+			XEnchantment.PROTECTION_FIRE.getEnchant(),
+			XEnchantment.PROTECTION_PROJECTILE.getEnchant(),
+			XEnchantment.PROTECTION_ENVIRONMENTAL.getEnchant(),
+			XEnchantment.OXYGEN.getEnchant(),
+			XEnchantment.THORNS.getEnchant(),
+			XEnchantment.DURABILITY.getEnchant(),
+			XEnchantment.VANISHING_CURSE.getEnchant(),
+			XEnchantment.BINDING_CURSE.getEnchant(),
+			XEnchantment.MENDING.getEnchant()
 		));
 		chestplateEnchantments.addAll(Arrays.asList(
-			XEnchantment.PROTECTION_EXPLOSIONS.parseEnchantment(),
-			XEnchantment.PROTECTION_FIRE.parseEnchantment(),
-			XEnchantment.PROTECTION_PROJECTILE.parseEnchantment(),
-			XEnchantment.PROTECTION_ENVIRONMENTAL.parseEnchantment(),
-			XEnchantment.THORNS.parseEnchantment(),
-			XEnchantment.DURABILITY.parseEnchantment(),
-			XEnchantment.VANISHING_CURSE.parseEnchantment(),
-			XEnchantment.BINDING_CURSE.parseEnchantment(),
-			XEnchantment.MENDING.parseEnchantment()
+			XEnchantment.PROTECTION_EXPLOSIONS.getEnchant(),
+			XEnchantment.PROTECTION_FIRE.getEnchant(),
+			XEnchantment.PROTECTION_PROJECTILE.getEnchant(),
+			XEnchantment.PROTECTION_ENVIRONMENTAL.getEnchant(),
+			XEnchantment.THORNS.getEnchant(),
+			XEnchantment.DURABILITY.getEnchant(),
+			XEnchantment.VANISHING_CURSE.getEnchant(),
+			XEnchantment.BINDING_CURSE.getEnchant(),
+			XEnchantment.MENDING.getEnchant()
 		));
 		leggingsEnchantments.addAll(Arrays.asList(
-			XEnchantment.PROTECTION_EXPLOSIONS.parseEnchantment(),
-			XEnchantment.PROTECTION_FIRE.parseEnchantment(),
-			XEnchantment.PROTECTION_PROJECTILE.parseEnchantment(),
-			XEnchantment.PROTECTION_ENVIRONMENTAL.parseEnchantment(),
-			XEnchantment.THORNS.parseEnchantment(),
-			XEnchantment.DURABILITY.parseEnchantment(),
-			XEnchantment.VANISHING_CURSE.parseEnchantment(),
-			XEnchantment.BINDING_CURSE.parseEnchantment(),
-			XEnchantment.MENDING.parseEnchantment()
+			XEnchantment.PROTECTION_EXPLOSIONS.getEnchant(),
+			XEnchantment.PROTECTION_FIRE.getEnchant(),
+			XEnchantment.PROTECTION_PROJECTILE.getEnchant(),
+			XEnchantment.PROTECTION_ENVIRONMENTAL.getEnchant(),
+			XEnchantment.THORNS.getEnchant(),
+			XEnchantment.DURABILITY.getEnchant(),
+			XEnchantment.VANISHING_CURSE.getEnchant(),
+			XEnchantment.BINDING_CURSE.getEnchant(),
+			XEnchantment.MENDING.getEnchant()
 		));
 		bootsEnchantments.addAll(Arrays.asList(
-			XEnchantment.DEPTH_STRIDER.parseEnchantment(),
-			XEnchantment.PROTECTION_FALL.parseEnchantment(),
-			XEnchantment.PROTECTION_FIRE.parseEnchantment(),
-			XEnchantment.PROTECTION_PROJECTILE.parseEnchantment(),
-			XEnchantment.PROTECTION_ENVIRONMENTAL.parseEnchantment(),
-			XEnchantment.THORNS.parseEnchantment(),
-			XEnchantment.DURABILITY.parseEnchantment(),
-			XEnchantment.PROTECTION_EXPLOSIONS.parseEnchantment(),
-			XEnchantment.DEPTH_STRIDER.parseEnchantment(),
-			XEnchantment.VANISHING_CURSE.parseEnchantment(),
-			XEnchantment.BINDING_CURSE.parseEnchantment(),
-			XEnchantment.FROST_WALKER.parseEnchantment(),
-			XEnchantment.MENDING.parseEnchantment(),
-			XEnchantment.SOUL_SPEED.parseEnchantment()
+			XEnchantment.DEPTH_STRIDER.getEnchant(),
+			XEnchantment.PROTECTION_FALL.getEnchant(),
+			XEnchantment.PROTECTION_FIRE.getEnchant(),
+			XEnchantment.PROTECTION_PROJECTILE.getEnchant(),
+			XEnchantment.PROTECTION_ENVIRONMENTAL.getEnchant(),
+			XEnchantment.THORNS.getEnchant(),
+			XEnchantment.DURABILITY.getEnchant(),
+			XEnchantment.PROTECTION_EXPLOSIONS.getEnchant(),
+			XEnchantment.DEPTH_STRIDER.getEnchant(),
+			XEnchantment.VANISHING_CURSE.getEnchant(),
+			XEnchantment.BINDING_CURSE.getEnchant(),
+			XEnchantment.FROST_WALKER.getEnchant(),
+			XEnchantment.MENDING.getEnchant(),
+			XEnchantment.SOUL_SPEED.getEnchant()
 		));
 
-		positiveEffects.add(XPotion.DAMAGE_RESISTANCE.parsePotionEffectType());
-		positiveEffects.add(XPotion.FIRE_RESISTANCE.parsePotionEffectType());
-		positiveEffects.add(XPotion.INCREASE_DAMAGE.parsePotionEffectType());
-		positiveEffects.add(XPotion.ABSORPTION.parsePotionEffectType());
-		positiveEffects.add(XPotion.FAST_DIGGING.parsePotionEffectType());
-		positiveEffects.add(XPotion.HEAL.parsePotionEffectType());
-		positiveEffects.add(XPotion.HEALTH_BOOST.parsePotionEffectType());
-		positiveEffects.add(XPotion.INVISIBILITY.parsePotionEffectType());
-		positiveEffects.add(XPotion.CONDUIT_POWER.parsePotionEffectType());
-		positiveEffects.add(XPotion.HERO_OF_THE_VILLAGE.parsePotionEffectType());
-		positiveEffects.add(XPotion.DOLPHINS_GRACE.parsePotionEffectType());
-		positiveEffects.add(XPotion.GLOWING.parsePotionEffectType());
-		positiveEffects.add(XPotion.LUCK.parsePotionEffectType());
-		positiveEffects.add(XPotion.WATER_BREATHING.parsePotionEffectType());
-		positiveEffects.add(XPotion.SATURATION.parsePotionEffectType());
-		positiveEffects.add(XPotion.SPEED.parsePotionEffectType());
-		positiveEffects.add(XPotion.JUMP.parsePotionEffectType());
-		positiveEffects.add(XPotion.NIGHT_VISION.parsePotionEffectType());
-		positiveEffects.add(XPotion.REGENERATION.parsePotionEffectType());
+		positiveEffects.add(XPotion.DAMAGE_RESISTANCE.getPotionEffectType());
+		positiveEffects.add(XPotion.FIRE_RESISTANCE.getPotionEffectType());
+		positiveEffects.add(XPotion.INCREASE_DAMAGE.getPotionEffectType());
+		positiveEffects.add(XPotion.ABSORPTION.getPotionEffectType());
+		positiveEffects.add(XPotion.FAST_DIGGING.getPotionEffectType());
+		positiveEffects.add(XPotion.HEAL.getPotionEffectType());
+		positiveEffects.add(XPotion.HEALTH_BOOST.getPotionEffectType());
+		positiveEffects.add(XPotion.INVISIBILITY.getPotionEffectType());
+		positiveEffects.add(XPotion.CONDUIT_POWER.getPotionEffectType());
+		positiveEffects.add(XPotion.HERO_OF_THE_VILLAGE.getPotionEffectType());
+		positiveEffects.add(XPotion.DOLPHINS_GRACE.getPotionEffectType());
+		positiveEffects.add(XPotion.GLOWING.getPotionEffectType());
+		positiveEffects.add(XPotion.LUCK.getPotionEffectType());
+		positiveEffects.add(XPotion.WATER_BREATHING.getPotionEffectType());
+		positiveEffects.add(XPotion.SATURATION.getPotionEffectType());
+		positiveEffects.add(XPotion.SPEED.getPotionEffectType());
+		positiveEffects.add(XPotion.JUMP.getPotionEffectType());
+		positiveEffects.add(XPotion.NIGHT_VISION.getPotionEffectType());
+		positiveEffects.add(XPotion.REGENERATION.getPotionEffectType());
 
-		XPotion.DEBUFFS.forEach(pet -> negativeEffects.add(pet.parsePotionEffectType()));
+		XPotion.DEBUFFS.forEach(pet -> negativeEffects.add(pet.getPotionEffectType()));
 
 		weaponsList = Arrays.asList(
 			XMaterial.WOODEN_SWORD.parseMaterial(),

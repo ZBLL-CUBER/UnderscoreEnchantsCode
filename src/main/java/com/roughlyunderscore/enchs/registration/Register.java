@@ -113,6 +113,7 @@ public class Register {
 		if (enchant == null) return;
 		AbstractEnchantment enchantment = enchant.getValue();
 		wrapEnchantment(enchantment, enchant.getKey(), plugin);
+		UnderscoreEnchants.staticEnchantmentData.add(enchant.getKey());
 	}
 
 	/**
