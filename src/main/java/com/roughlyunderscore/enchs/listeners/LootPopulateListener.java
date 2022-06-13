@@ -51,7 +51,7 @@ public class LootPopulateListener implements Listener {
 			Enchantment enchantment = getPossibleEnchantments(loot, getTypicalEnchantments(loot), 1).get(0);
 			int level = ThreadLocalRandom.current().nextInt(enchantment.getStartLevel(), enchantment.getMaxLevel() + 1);
 
-			loot.setItemMeta(enchant(loot, enchantment, level, plugin).getKey().getItemMeta());
+			loot.setItemMeta(enchant(loot, enchantment, level).getKey().getItemMeta());
 		});
 	}
 
@@ -76,7 +76,7 @@ public class LootPopulateListener implements Listener {
 		Enchantment enchantment = enchantments.isEmpty() ? Enchantment.BINDING_CURSE : enchantments.get(0);
 		int level = ThreadLocalRandom.current().nextInt(enchantment.getStartLevel(), enchantment.getMaxLevel() + 1);
 
-		item = enchant(item, enchantment, level, plugin).getKey();
+		item = enchant(item, enchantment, level).getKey();
 
 		MerchantRecipe recipe = new MerchantRecipe(item, uses, maxUses, reward, exp, coefficient);
 		recipe.setIngredients(recipe0.getIngredients());
@@ -98,7 +98,7 @@ public class LootPopulateListener implements Listener {
 
 		Enchantment enchantment = getPossibleEnchantments(result, getTypicalEnchantments(result), 1).get(0);
 		int level = ThreadLocalRandom.current().nextInt(enchantment.getStartLevel(), enchantment.getMaxLevel() + 1);
-		result = enchant(result, enchantment, level, plugin).getKey();
+		result = enchant(result, enchantment, level).getKey();
 
 		it.setItemStack(result);
 	}

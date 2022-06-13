@@ -100,12 +100,13 @@ public final class UnderscoreEnchants extends JavaPlugin {
 	public static FileConfiguration staticConfig;
 	//</editor-fold>
 	private void regTest() {
-		if (!serverVersion.contains("1.16") &&
-			!serverVersion.contains("1.15") &&
-			!serverVersion.contains("1.17") &&
+		if (!serverVersion.contains("1.13") &&
 			!serverVersion.contains("1.14") &&
-			!serverVersion.contains("1.13") &&
-			!serverVersion.contains("1.18")){
+			!serverVersion.contains("1.15") &&
+			!serverVersion.contains("1.16") &&
+			!serverVersion.contains("1.17") &&
+			!serverVersion.contains("1.18") &&
+			!serverVersion.contains("1.19")){
 			throw new IllegalStateException("Couldn't start the plugin. Is your server running on <1.13? The plugin works on 1.13+ and functions properly on 1.17+.");
 		}
 	}

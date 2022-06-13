@@ -180,7 +180,7 @@ public class PlayerUtils<T, Z> {
 		return player.hasPotionEffect(effect);
 	}
 	public boolean hasPotion(Player player, XPotion effect) {
-		return hasPotion(player, Objects.requireNonNull(effect.parsePotionEffectType()));
+		return hasPotion(player, Objects.requireNonNull(effect.getPotionEffectType()));
 	}
 	public boolean hasPotion(Player player, String effect) {
 		return hasPotion(player, Objects.requireNonNull(XPotion.valueOf(effect)));
@@ -683,10 +683,10 @@ public class PlayerUtils<T, Z> {
 		player.addPotionEffect(new PotionEffect(effect, 999999, 0));
 	}
 	public void addPermanentPotion(Player player, XPotion effect) {
-		addPermanentPotion(player, effect.parsePotionEffectType());
+		addPermanentPotion(player, effect.getPotionEffectType());
 	}
 	public void addPermanentPotion(Player player, String effect) {
-		addPermanentPotion(player, XPotion.valueOf(effect).parsePotionEffectType());
+		addPermanentPotion(player, XPotion.valueOf(effect).getPotionEffectType());
 	}
 
 	public void addPermanentPotion(Player player, PotionEffectType effect, int amplifier) {
@@ -694,10 +694,10 @@ public class PlayerUtils<T, Z> {
 		player.addPotionEffect(new PotionEffect(effect, 999999, amplifier));
 	}
 	public void addPermanentPotion(Player player, XPotion effect, int amplifier) {
-		addPermanentPotion(player, effect.parsePotionEffectType(), amplifier);
+		addPermanentPotion(player, effect.getPotionEffectType(), amplifier);
 	}
 	public void addPermanentPotion(Player player, String effect, int amplifier) {
-		addPermanentPotion(player, XPotion.valueOf(effect).parsePotionEffectType(), amplifier);
+		addPermanentPotion(player, XPotion.valueOf(effect).getPotionEffectType(), amplifier);
 	}
 
 	public void addPotion(Player player, PotionEffectType effect, int ticks) {
@@ -705,10 +705,10 @@ public class PlayerUtils<T, Z> {
 		player.addPotionEffect(new PotionEffect(effect, ticks, 0));
 	}
 	public void addPotion(Player player, XPotion effect, int ticks) {
-		addPotion(player, effect.parsePotionEffectType(), ticks, 0);
+		addPotion(player, effect.getPotionEffectType(), ticks, 0);
 	}
 	public void addPotion(Player player, String effect, int ticks) {
-		addPotion(player, XPotion.valueOf(effect).parsePotionEffectType(), ticks, 0);
+		addPotion(player, XPotion.valueOf(effect).getPotionEffectType(), ticks, 0);
 	}
 
 	public void addPotion(Player player, PotionEffectType effect, int ticks, int amplifier) {
@@ -716,10 +716,10 @@ public class PlayerUtils<T, Z> {
 		player.addPotionEffect(new PotionEffect(effect, ticks, amplifier));
 	}
 	public void addPotion(Player player, XPotion effect, int ticks, int amplifier) {
-		addPotion(player, effect.parsePotionEffectType(), ticks, amplifier);
+		addPotion(player, effect.getPotionEffectType(), ticks, amplifier);
 	}
 	public void addPotion(Player player, String effect, int ticks, int amplifier) {
-		addPotion(player, XPotion.valueOf(effect).parsePotionEffectType(), ticks, amplifier);
+		addPotion(player, XPotion.valueOf(effect).getPotionEffectType(), ticks, amplifier);
 	}
 
 	public void removePotion(Player player, PotionEffectType effect) {
@@ -727,10 +727,10 @@ public class PlayerUtils<T, Z> {
 		player.removePotionEffect(effect);
 	}
 	public void removePotion(Player player, XPotion effect) {
-		removePotion(player, effect.parsePotionEffectType());
+		removePotion(player, effect.getPotionEffectType());
 	}
 	public void removePotion(Player player, String effect) {
-		removePotion(player, XPotion.valueOf(effect).parsePotionEffectType());
+		removePotion(player, XPotion.valueOf(effect).getPotionEffectType());
 	}
 
 	public void removeBuffs(Player player, UnderscoreEnchants plugin) {
@@ -1101,7 +1101,7 @@ public class PlayerUtils<T, Z> {
 	@SuppressWarnings("all") // ref. above
 	public LivingEntity spawnEntity(Player pl, String type, String x, String y, String z, String name, String hp, String pot, String ticks, String amplifier) {
 		return spawnEntity(pl, EntityType.valueOf(type), Utils.parseD(x), Utils.parseD(y), Utils.parseD(z), name, Utils.parseD(hp),
-					XPotion.valueOf(pot).parsePotionEffectType(), Utils.parseI(ticks), Utils.parseI(amplifier));
+					XPotion.valueOf(pot).getPotionEffectType(), Utils.parseI(ticks), Utils.parseI(amplifier));
 	}
 	//</editor-fold>
 

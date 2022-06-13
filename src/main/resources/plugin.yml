@@ -4,6 +4,7 @@ version: ${project.version}
 main: com.roughlyunderscore.enchs.UnderscoreEnchants
 authors: [ Roughly_ ]
 description: A premium plugin that adds a TON of enchants in the game!
+load: startup
 awareness:
   - !@UTF8
 depend:

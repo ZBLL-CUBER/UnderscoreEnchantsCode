@@ -4,6 +4,7 @@ import com.codingforcookies.armorequip.ArmorEquipEvent;
 import com.cryptomorin.xseries.XMaterial;
 import com.roughlyunderscore.enchs.UnderscoreEnchants;
 import com.roughlyunderscore.enchs.events.*;
+import com.roughlyunderscore.enchs.util.Pair;
 import com.roughlyunderscore.enchs.util.general.Utils;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
+import static com.roughlyunderscore.enchs.util.general.EntityUtils.*;
 import static com.roughlyunderscore.enchs.util.general.PlayerUtils.*;
 import static com.roughlyunderscore.enchs.util.general.Utils.*;
 import static com.roughlyunderscore.enchs.util.general.EntityUtils.*;
@@ -62,103 +64,15 @@ public class ConditionParsers {
 			negate = true;
 		}
 
+		return defaultParse(condition, pl, vic, negate, plugin,
 
+			Pair.of("damage-of", Math.floor(damage) == Utils.parseD(condition[1])),
+			Pair.of("damage-lower", damage < Utils.parseD(condition[1])),
+			Pair.of("damage-higher", damage > Utils.parseD(condition[1])),
+			Pair.of("damage-lethal", damage >= getHealth(vic)),
+			Pair.of("damage-non-lethal", damage < getHealth(vic))
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
-
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "victim-sneaking" -> sneaking(vic);
-			case "victim-sprinting" -> sprinting(vic);
-			case "victim-swimming" -> swimming(vic);
-			case "victim-blocking" -> blocking(vic);
-			case "victim-flying" -> flying(vic);
-
-			case "victim-onfire" -> onFire(vic);
-			case "victim-onhighestblock" -> onTop(vic);
-
-			case "victim-rain" -> rains(vic);
-			case "victim-clear" -> sunshines(vic);
-			case "victim-thunder" -> thunders(vic);
-
-			case "victim-day" -> day(vic);
-			case "victim-night" -> night(vic);
-
-			case "victim-overworld" -> overworld(vic);
-			case "victim-nether" -> nether(vic);
-			case "victim-end" -> end(vic);
-
-			case "victim-op" -> op(vic);
-
-			case "victim-health-of" -> (int) getHealth(vic) == Utils.parseD(condition[1]);
-			case "victim-health-lower" -> getHealth(vic) < Utils.parseD(condition[1]);
-			case "victim-health-higher" -> getHealth(vic) > Utils.parseD(condition[1]);
-			case "victim-healthy" -> getHealth(vic) == getMaximumHealth(vic);
-
-			case "victim-food-of" -> getFood(vic) == Utils.parseI(condition[1]);
-			case "victim-food-lower" -> getFood(vic) < Utils.parseI(condition[1]);
-			case "victim-food-higher" -> getFood(vic) > Utils.parseI(condition[1]);
-			case "victim-satiated" -> getFood(vic) == 20;
-
-			case "victim-air-of" -> getAir(vic) == Utils.parseI(condition[1]);
-			case "victim-air-lower" -> getAir(vic) < Utils.parseI(condition[1]);
-			case "victim-air-higher" -> getAir(vic) > Utils.parseI(condition[1]);
-			case "victim-oxygenated" -> getAir(vic) == getMaximumAir(vic);
-
-			case "victim-godmode-of" -> invisibleFor(vic) == Utils.parseI(condition[1]);
-			case "victim-godmode-lower" -> invisibleFor(vic) < Utils.parseI(condition[1]);
-			case "victim-godmode-higher" -> invisibleFor(vic) > Utils.parseI(condition[1]);
-
-			case "damage-of" -> Math.floor(damage) == Utils.parseD(condition[1]);
-			case "damage-lower" -> damage < Utils.parseD(condition[1]);
-			case "damage-higher" -> damage > Utils.parseD(condition[1]);
-			case "damage-lethal" -> damage >= getHealth(vic);
-			case "damage-non-lethal" -> damage < getHealth(vic);
-
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
+		);
 	}
 
 	public boolean parseCondition(PlayerBowHitEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -175,101 +89,16 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
+		return defaultParse(condition, pl, vic, negate, plugin,
 
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
+			Pair.of("damage-of", Math.floor(damage) == Utils.parseD(condition[1])),
+			Pair.of("damage-lower", damage < Utils.parseD(condition[1])),
+			Pair.of("damage-higher", damage > Utils.parseD(condition[1])),
+			Pair.of("damage-lethal", damage >= getHealth(vic)),
+			Pair.of("damage-non-lethal", damage < getHealth(vic))
 
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
+		);
 
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "victim-sneaking" -> sneaking(vic);
-			case "victim-sprinting" -> sprinting(vic);
-			case "victim-swimming" -> swimming(vic);
-			case "victim-blocking" -> blocking(vic);
-			case "victim-flying" -> flying(vic);
-
-			case "victim-onfire" -> onFire(vic);
-			case "victim-onhighestblock" -> onTop(vic);
-
-			case "victim-rain" -> rains(vic);
-			case "victim-clear" -> sunshines(vic);
-			case "victim-thunder" -> thunders(vic);
-
-			case "victim-day" -> day(vic);
-			case "victim-night" -> night(vic);
-
-			case "victim-overworld" -> overworld(vic);
-			case "victim-nether" -> nether(vic);
-			case "victim-end" -> end(vic);
-
-			case "victim-op" -> op(vic);
-
-			case "victim-health-of" -> (int) getHealth(vic) == Utils.parseD(condition[1]);
-			case "victim-health-lower" -> getHealth(vic) < Utils.parseD(condition[1]);
-			case "victim-health-higher" -> getHealth(vic) > Utils.parseD(condition[1]);
-			case "victim-healthy" -> getHealth(vic) == getMaximumHealth(vic);
-
-			case "victim-food-of" -> getFood(vic) == Utils.parseI(condition[1]);
-			case "victim-food-lower" -> getFood(vic) < Utils.parseI(condition[1]);
-			case "victim-food-higher" -> getFood(vic) > Utils.parseI(condition[1]);
-			case "victim-satiated" -> getFood(vic) == 20;
-
-			case "victim-air-of" -> getAir(vic) == Utils.parseI(condition[1]);
-			case "victim-air-lower" -> getAir(vic) < Utils.parseI(condition[1]);
-			case "victim-air-higher" -> getAir(vic) > Utils.parseI(condition[1]);
-			case "victim-oxygenated" -> getAir(vic) == getMaximumAir(vic);
-
-			case "victim-godmode-of" -> invisibleFor(vic) == Utils.parseI(condition[1]);
-			case "victim-godmode-lower" -> invisibleFor(vic) < Utils.parseI(condition[1]);
-			case "victim-godmode-higher" -> invisibleFor(vic) > Utils.parseI(condition[1]);
-
-			case "damage-of" -> Math.floor(damage) == Utils.parseD(condition[1]);
-			case "damage-lower" -> damage < Utils.parseD(condition[1]);
-			case "damage-higher" -> damage > Utils.parseD(condition[1]);
-			case "damage-lethal" -> damage >= getHealth(vic);
-			case "damage-non-lethal" -> damage < getHealth(vic);
-
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
 	}
 
 	public boolean parseCondition(ArmorEquipEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -290,66 +119,19 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("equipped-helmet", newItem != null && newType != Material.AIR && (newName.contains("helmet"))),
+			Pair.of("equipped-chestplate", newItem != null && newType != Material.AIR && newName.contains("chestplate")),
+			Pair.of("equipped-leggings", newItem != null && newType != Material.AIR && newName.contains("leggings")),
+			Pair.of("equipped-boots", newItem != null && newType != Material.AIR && newName.contains("boots")),
+			Pair.of("equipped", newItem != null && newType != Material.AIR),
 
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "equipped-helmet" -> newItem != null && newType != Material.AIR && (newName.contains("helmet"));
-			case "equipped-chestplate" -> newItem != null && newType != Material.AIR && newName.contains("chestplate");
-			case "equipped-leggings" -> newItem != null && newType != Material.AIR && newName.contains("leggings");
-			case "equipped-boots" -> newItem != null && newType != Material.AIR && newName.contains("boots");
-			case "equipped" -> newItem != null && newType != Material.AIR;
-
-			case "unequipped-helmet" -> oldItem != null && oldType != Material.AIR && (oldName.contains("helmet"));
-			case "unequipped-chestplate" -> oldItem != null && oldType != Material.AIR && oldName.contains("chestplate");
-			case "unequipped-leggings" -> oldItem != null && oldType != Material.AIR && oldName.contains("leggings");
-			case "unequipped-boots" -> oldItem != null && oldType != Material.AIR && oldName.contains("boots");
-			case "unequipped" -> oldItem != null && oldType != Material.AIR;
-
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
+			Pair.of("unequipped-helmet", oldItem != null && oldType != Material.AIR && (oldName.contains("helmet"))),
+			Pair.of("unequipped-chestplate", oldItem != null && oldType != Material.AIR && oldName.contains("chestplate")),
+			Pair.of("unequipped-leggings", oldItem != null && oldType != Material.AIR && oldName.contains("leggings")),
+			Pair.of("unequipped-boots", oldItem != null && oldType != Material.AIR && oldName.contains("boots")),
+			Pair.of("unequipped", oldItem != null && oldType != Material.AIR)
+		);
 	}
 
 	public boolean parseCondition(BlockBreakEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -365,56 +147,9 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
-
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "block-is" -> block.getType().name().equalsIgnoreCase(condition[1]);
-
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("block-is", block.getType().name().equalsIgnoreCase(condition[1]))
+		);
 	}
 
 	public boolean parseCondition(PlayerItemBreakEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -430,56 +165,9 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
-
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "item-is" -> item.getType().name().equalsIgnoreCase(condition[1]);
-
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("item-is", item.getType().name().equalsIgnoreCase(condition[1]))
+		);
 	}
 
 	public boolean parseCondition(PlayerItemConsumeEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -495,62 +183,19 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
-
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "food-is" -> item.getType().name().equalsIgnoreCase(condition[1]);
-			case "is-vegetarian" -> isVegetarian(item.getType());
-			case "is-pescetarian" -> isPescetarian(item.getType());
-			case "is-potion" -> item.getType() == Material.POTION;
-			case "is-honey" -> item.getType() == Material.HONEY_BOTTLE;
-			case "is-milk" -> item.getType() == Material.MILK_BUCKET;
-			case "is-food" -> !(parseCondition(ev, "is-potion", plugin) || parseCondition(ev, "is-milk", plugin) || parseCondition(ev, "is-honey", plugin));
-
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("food-is", item.getType().name().equalsIgnoreCase(condition[1])),
+			Pair.of("is-vegetarian", isVegetarian(item.getType())),
+			Pair.of("is-pescetarian", isPescetarian(item.getType())),
+			Pair.of("is-potion", item.getType() == Material.POTION),
+			Pair.of("is-honey", item.getType() == Material.HONEY_BOTTLE),
+			Pair.of("is-milk", item.getType() == Material.MILK_BUCKET),
+			Pair.of("is-food",
+				!(parseCondition(ev, "is-potion", plugin) ||
+					parseCondition(ev, "is-milk", plugin) ||
+					parseCondition(ev, "is-honey", plugin))
+			)
+		);
 	}
 
 	public boolean parseCondition(PlayerInteractAtEntityEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -566,62 +211,7 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
-
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "entity-swimming" -> swimming(entity);
-			case "entity-onfire" -> onFire(entity);
-			case "entity-onhighestblock" -> onTop(entity);
-
-			case "entity-health-of" -> (int) getHealth(entity) == Utils.parseD(condition[1]);
-			case "entity-health-lower" -> getHealth(entity) < Utils.parseD(condition[1]);
-			case "entity-health-higher" -> getHealth(entity) > Utils.parseD(condition[1]);
-			case "entity-healthy" -> getHealth(entity) == getMaximumHealth(entity);
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
+		return defaultParse(condition, pl, entity, negate, plugin, Pair.empty());
 	}
 
 	public boolean parseCondition(PlayerInteractEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -630,7 +220,7 @@ public class ConditionParsers {
 
 		Player pl = ev.getPlayer();
 		Player player = ev.getPlayer();
-		Location location = player.getLocation(); assert location.getWorld() != null; // this is for my IDE to stop freaking out, will always be true
+		Location location = player.getLocation();
 		Block block = ev.getClickedBlock() == null ? location.getWorld().getBlockAt(0, 0, 0) : ev.getClickedBlock(); // null check
 
 		boolean negate = false;
@@ -639,60 +229,14 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
-
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "block-is" -> block.getType().name().equalsIgnoreCase(condition[1]);
-			case "clicked-lmb-air" -> ev.getAction() == Action.LEFT_CLICK_AIR;
-			case "clicked-lmb-block" -> ev.getAction() == Action.LEFT_CLICK_BLOCK;
-			case "clicked-rmb-air" -> ev.getAction() == Action.RIGHT_CLICK_AIR;
-			case "clicked-rmb-block" -> ev.getAction() == Action.RIGHT_CLICK_BLOCK;
-			case "physical-action" -> ev.getAction() == Action.PHYSICAL;
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("block-is", block.getType().name().equalsIgnoreCase(condition[1])),
+			Pair.of("clicked-lmb-air", ev.getAction() == Action.LEFT_CLICK_AIR),
+			Pair.of("clicked-lmb-block", ev.getAction() == Action.LEFT_CLICK_BLOCK),
+			Pair.of("clicked-rmb-air", ev.getAction() == Action.RIGHT_CLICK_AIR),
+			Pair.of("clicked-rmb-block", ev.getAction() == Action.RIGHT_CLICK_BLOCK),
+			Pair.of("physical-action", ev.getAction() == Action.PHYSICAL)
+		);
 	}
 
 	public boolean parseCondition(PlayerMoveEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -709,60 +253,15 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("from-is", from.getBlock().getType() == XMaterial.valueOf(condition[1]).parseMaterial()),
+			Pair.of("to-is", to.getBlock().getType() == XMaterial.valueOf(condition[1]).parseMaterial()),
+			Pair.of("jump", isByJump(ev)),
+			Pair.of("same-block", isBySameBlock(ev)),
+			Pair.of("not-same-block", isByDifferentBlocks(ev)),
+			Pair.of("head-rotate", isByHeadRotate(ev))
+		);
 
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "from-is" -> from.getBlock().getType() == XMaterial.valueOf(condition[1]).parseMaterial();
-			case "to-is" -> to.getBlock().getType() == XMaterial.valueOf(condition[1]).parseMaterial();
-			case "jump" -> isByJump(ev);
-			case "same-block" -> isBySameBlock(ev);
-			case "not-same-block" -> isByDifferentBlocks(ev);
-			case "head-rotate" -> isByHeadRotate(ev);
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
 	}
 
 	public boolean parseCondition(PlayerGotHurtEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -778,89 +277,37 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
-
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "damage-of" -> Math.floor(damage) == Utils.parseD(condition[1]);
-			case "damage-lower" -> damage < Utils.parseD(condition[1]);
-			case "damage-higher" -> damage > Utils.parseD(condition[1]);
-			case "damage-lethal" -> damage >= getHealth(pl);
-			case "damage-non-lethal" -> damage < getHealth(pl);
-
-			case "caused-by-block-explosion" ->         ev.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION;
-			case "caused-by-hazardous-block" ->         ev.getCause() == EntityDamageEvent.DamageCause.CONTACT;
-			case "caused-by-entity-cramming" ->         ev.getCause() == EntityDamageEvent.DamageCause.CRAMMING;
-			case "caused-by-unknown-source" ->          ev.getCause() == EntityDamageEvent.DamageCause.CUSTOM;
-			case "caused-by-dragon-breath" ->           ev.getCause() == EntityDamageEvent.DamageCause.DRAGON_BREATH;
-			case "caused-by-drowning" ->                ev.getCause() == EntityDamageEvent.DamageCause.DROWNING;
-			case "caused-by-entity-attack" ->           ev.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK;
-			case "caused-by-entity-explosion" ->        ev.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION;
-			case "caused-by-entity-sweep-attack" ->     ev.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK;
-			case "caused-by-falling" ->                 ev.getCause() == EntityDamageEvent.DamageCause.FALL;
-			case "caused-by-falling-block" ->           ev.getCause() == EntityDamageEvent.DamageCause.FALLING_BLOCK;
-			case "caused-by-direct-fire-exposure" ->    ev.getCause() == EntityDamageEvent.DamageCause.FIRE;
-			case "caused-by-fire-tick" ->               ev.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK;
-			case "caused-by-flying-into-wall" ->        ev.getCause() == EntityDamageEvent.DamageCause.FLY_INTO_WALL;
-			case "caused-by-freezing" ->                ev.getCause() == EntityDamageEvent.DamageCause.FREEZE;
-			case "caused-by-magma-damage" ->            ev.getCause() == EntityDamageEvent.DamageCause.HOT_FLOOR;
-			case "caused-by-lava" ->                    ev.getCause() == EntityDamageEvent.DamageCause.LAVA;
-			case "caused-by-lightning" ->               ev.getCause() == EntityDamageEvent.DamageCause.LIGHTNING;
-			case "caused-by-magic" ->                   ev.getCause() == EntityDamageEvent.DamageCause.MAGIC;
-			case "caused-by-poison" ->                  ev.getCause() == EntityDamageEvent.DamageCause.POISON;
-			case "caused-by-projectile" ->              ev.getCause() == EntityDamageEvent.DamageCause.PROJECTILE;
-			case "caused-by-starvation" ->              ev.getCause() == EntityDamageEvent.DamageCause.STARVATION;
-			case "caused-by-suffocation" ->             ev.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION;
-			case "caused-by-plugin-enforcement" ->      ev.getCause() == EntityDamageEvent.DamageCause.SUICIDE;
-			case "caused-by-thorns" ->                  ev.getCause() == EntityDamageEvent.DamageCause.THORNS;
-			case "caused-by-void" ->                    ev.getCause() == EntityDamageEvent.DamageCause.VOID;
-			case "caused-by-withering" ->               ev.getCause() == EntityDamageEvent.DamageCause.WITHER;
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("caused-by-block-explosion", ev.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION),
+			Pair.of("caused-by-hazardous-block", ev.getCause() == EntityDamageEvent.DamageCause.CONTACT),
+			Pair.of("caused-by-entity-cramming", ev.getCause() == EntityDamageEvent.DamageCause.CRAMMING),
+			Pair.of("caused-by-unknown-source", ev.getCause() == EntityDamageEvent.DamageCause.CUSTOM),
+			Pair.of("caused-by-dragon-breath", ev.getCause() == EntityDamageEvent.DamageCause.DRAGON_BREATH),
+			Pair.of("caused-by-drowning", ev.getCause() == EntityDamageEvent.DamageCause.DROWNING),
+			Pair.of("caused-by-entity-attack", ev.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK),
+			Pair.of("caused-by-entity-explosion", ev.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION),
+			Pair.of("caused-by-entity-sweep-attack", ev.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK),
+			Pair.of("caused-by-falling", ev.getCause() == EntityDamageEvent.DamageCause.FALL),
+			Pair.of("caused-by-falling-block", ev.getCause() == EntityDamageEvent.DamageCause.FALLING_BLOCK),
+			Pair.of("caused-by-direct-fire-exposure", ev.getCause() == EntityDamageEvent.DamageCause.FIRE),
+			Pair.of("caused-by-fire-tick", ev.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK),
+			Pair.of("caused-by-flying-into-wall", ev.getCause() == EntityDamageEvent.DamageCause.FLY_INTO_WALL),
+			Pair.of("caused-by-freezing", ev.getCause() == EntityDamageEvent.DamageCause.FREEZE),
+			Pair.of("caused-by-magma-damage", ev.getCause() == EntityDamageEvent.DamageCause.HOT_FLOOR),
+			Pair.of("caused-by-lava", ev.getCause() == EntityDamageEvent.DamageCause.LAVA),
+			Pair.of("caused-by-lightning", ev.getCause() == EntityDamageEvent.DamageCause.LIGHTNING),
+			Pair.of("caused-by-magic", ev.getCause() == EntityDamageEvent.DamageCause.MAGIC),
+			Pair.of("caused-by-poison", ev.getCause() == EntityDamageEvent.DamageCause.POISON),
+			Pair.of("caused-by-projectile", ev.getCause() == EntityDamageEvent.DamageCause.PROJECTILE),
+			Pair.of("caused-by-starvation", ev.getCause() == EntityDamageEvent.DamageCause.STARVATION),
+			Pair.of("caused-by-suffocation", ev.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION),
+			Pair.of("caused-by-plugin-enforcement", ev.getCause() == EntityDamageEvent.DamageCause.SUICIDE),
+			Pair.of("caused-by-thorns", ev.getCause() == EntityDamageEvent.DamageCause.THORNS),
+			Pair.of("caused-by-void", ev.getCause() == EntityDamageEvent.DamageCause.VOID),
+			Pair.of("caused-by-withering", ev.getCause() == EntityDamageEvent.DamageCause.WITHER)
+		);
 
 
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
 	}
 
 	public boolean parseCondition(PlayerHurtsEntityEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -877,69 +324,14 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
+		return defaultParse(condition, pl, entity, negate, plugin,
+			Pair.of("damage-of", Math.floor(damage) == Utils.parseD(condition[1])),
+			Pair.of("damage-lower", damage < Utils.parseD(condition[1])),
+			Pair.of("damage-higher", damage > Utils.parseD(condition[1])),
+			Pair.of("damage-lethal", damage >= getHealth(entity)),
+			Pair.of("damage-non-lethal", damage < getHealth(entity))
+		);
 
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "entity-swimming" -> swimming(entity);
-			case "entity-onfire" -> onFire(entity);
-			case "entity-onhighestblock" -> onTop(entity);
-
-			case "entity-health-of" -> (int) getHealth(entity) == Utils.parseD(condition[1]);
-			case "entity-health-lower" -> getHealth(entity) < Utils.parseD(condition[1]);
-			case "entity-health-higher" -> getHealth(entity) > Utils.parseD(condition[1]);
-			case "entity-healthy" -> getHealth(entity) == getMaximumHealth(entity);
-
-			case "damage-of" -> Math.floor(damage) == Utils.parseD(condition[1]);
-			case "damage-lower" -> damage < Utils.parseD(condition[1]);
-			case "damage-higher" -> damage > Utils.parseD(condition[1]);
-			case "damage-lethal" -> damage >= getHealth(entity);
-			case "damage-non-lethal" -> damage < getHealth(entity);
-
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
 	}
 
 	public boolean parseCondition(PlayerShootBowEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -955,58 +347,12 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("force-of", Float.parseFloat(new DecimalFormat("#.#").format(force)) == Utils.parseD(condition[1])),
+			Pair.of("force-lower", force < Utils.parseD(condition[1])),
+			Pair.of("force-higher", force > Utils.parseD(condition[1]))
+		);
 
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
-
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
-
-			case "day" -> day(pl);
-			case "night" -> night(pl);
-
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
-
-			case "op" -> op(pl);
-
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
-
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
-
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
-
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
-
-			case "force-of" -> Float.parseFloat(new DecimalFormat("#.#").format(force)) == Utils.parseD(condition[1]);
-			case "force-lower" -> force < Utils.parseD(condition[1]);
-			case "force-higher" -> force > Utils.parseD(condition[1]);
-
-			default -> false;
-
-		};
-
-		if (negate) return !result;
-		else return result;
 	}
 
 	public boolean parseCondition(PlayerToggleSneakEvent ev, String condition0, UnderscoreEnchants plugin) {
@@ -1021,54 +367,216 @@ public class ConditionParsers {
 			negate = true;
 		}
 
-		boolean result = switch (condition[0].toLowerCase()) {
-			case "sneaking" -> sneaking(pl);
-			case "sprinting" -> sprinting(pl);
-			case "swimming" -> swimming(pl);
-			case "blocking" -> blocking(pl);
-			case "flying" -> flying(pl);
+		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("sneaked", ev.isSneaking()),
+			Pair.of("unsneaked", !ev.isSneaking())
+		);
+	}
 
-			case "onfire" -> onFire(pl);
-			case "onhighestblock" -> onTop(pl);
 
-			case "rain" -> rains(pl);
-			case "clear" -> sunshines(pl);
-			case "thunder" -> thunders(pl);
 
-			case "day" -> day(pl);
-			case "night" -> night(pl);
+	@SafeVarargs
+	private boolean defaultParse(String[] condition, Player pl, boolean negate, UnderscoreEnchants plugin, Pair<String, Boolean>... extra) {
+		Boolean result = null;
 
-			case "overworld" -> overworld(pl);
-			case "nether" -> nether(pl);
-			case "end" -> end(pl);
+		if ("pdc-match".equalsIgnoreCase(condition[0]))             result = getPDCValue(pl, getKey(condition[1], plugin)).equals(condition[2]);
+		else if ("sneaking".equalsIgnoreCase(condition[0]))         result = sneaking(pl);
+		else if ("sprinting".equalsIgnoreCase(condition[0]))        result = sprinting(pl);
+		else if ("swimming".equalsIgnoreCase(condition[0]))         result = swimming(pl);
+		else if ("blocking".equalsIgnoreCase(condition[0]))         result = blocking(pl);
+		else if ("flying".equalsIgnoreCase(condition[0]))           result = flying(pl);
+		else if ("onfire".equalsIgnoreCase(condition[0]))           result = onFire(pl);
+		else if ("onhighestblock".equalsIgnoreCase(condition[0]))   result = onTop(pl);
+		else if ("rain".equalsIgnoreCase(condition[0]))             result = rains(pl);
+		else if ("clear".equalsIgnoreCase(condition[0]))            result = sunshines(pl);
+		else if ("thunder".equalsIgnoreCase(condition[0]))          result = thunders(pl);
+		else if ("day".equalsIgnoreCase(condition[0]))              result = day(pl);
+		else if ("night".equalsIgnoreCase(condition[0]))            result = night(pl);
+		else if ("overworld".equalsIgnoreCase(condition[0]))        result = overworld(pl);
+		else if ("nether".equalsIgnoreCase(condition[0]))           result = nether(pl);
+		else if ("end".equalsIgnoreCase(condition[0]))              result = end(pl);
+		else if ("op".equalsIgnoreCase(condition[0]))               result = op(pl);
+		else if ("health-of".equalsIgnoreCase(condition[0]))        result = (int) getHealth(pl) == parseD(condition[1]);
+		else if ("health-lower".equalsIgnoreCase(condition[0]))     result = getHealth(pl) < parseD(condition[1]);
+		else if ("health-higher".equalsIgnoreCase(condition[0]))    result = getHealth(pl) > parseD(condition[1]);
+		else if ("healthy".equalsIgnoreCase(condition[0]))          result = getHealth(pl) == getMaximumHealth(pl);
+		else if ("food-of".equalsIgnoreCase(condition[0]))          result = getFood(pl) == parseI(condition[1]);
+		else if ("food-lower".equalsIgnoreCase(condition[0]))       result = getFood(pl) < parseI(condition[1]);
+		else if ("food-higher".equalsIgnoreCase(condition[0]))      result = getFood(pl) > parseI(condition[1]);
+		else if ("satiated".equalsIgnoreCase(condition[0]))         result = getFood(pl) == 20;
+		else if ("air-of".equalsIgnoreCase(condition[0]))           result = getAir(pl) == parseI(condition[1]);
+		else if ("air-lower".equalsIgnoreCase(condition[0]))        result = getAir(pl) < parseI(condition[1]);
+		else if ("air-higher".equalsIgnoreCase(condition[0]))       result = getAir(pl) > parseI(condition[1]);
+		else if ("oxygenated".equalsIgnoreCase(condition[0]))       result = getAir(pl) == getMaximumAir(pl);
+		else if ("godmode-of".equalsIgnoreCase(condition[0]))       result = invisibleFor(pl) == parseI(condition[1]);
+		else if ("godmode-lower".equalsIgnoreCase(condition[0]))    result = invisibleFor(pl) < parseI(condition[1]);
+		else if ("godmode-higher".equalsIgnoreCase(condition[0]))   result = invisibleFor(pl) > parseI(condition[1]);
 
-			case "op" -> op(pl);
+		else {
+			for (Pair<String, Boolean> pair : extra) {
+				if (pair.getKey().equalsIgnoreCase(condition[0]))   result = pair.getValue();
+			}
+		}
 
-			case "health-of" -> (int) getHealth(pl) == Utils.parseD(condition[1]);
-			case "health-lower" -> getHealth(pl) < Utils.parseD(condition[1]);
-			case "health-higher" -> getHealth(pl) > Utils.parseD(condition[1]);
-			case "healthy" -> getHealth(pl) == getMaximumHealth(pl);
+		if (result == null) return false;
 
-			case "food-of" -> getFood(pl) == Utils.parseI(condition[1]);
-			case "food-lower" -> getFood(pl) < Utils.parseI(condition[1]);
-			case "food-higher" -> getFood(pl) > Utils.parseI(condition[1]);
-			case "satiated" -> getFood(pl) == 20;
+		if (negate) return !result;
+		else return result;
+	}
 
-			case "air-of" -> getAir(pl) == Utils.parseI(condition[1]);
-			case "air-lower" -> getAir(pl) < Utils.parseI(condition[1]);
-			case "air-higher" -> getAir(pl) > Utils.parseI(condition[1]);
-			case "oxygenated" -> getAir(pl) == getMaximumAir(pl);
+	@SafeVarargs
+	private boolean defaultParse(String[] condition, Player pl, Entity entity, boolean negate, UnderscoreEnchants plugin, Pair<String, Boolean>... extra) {
+		Boolean result = null;
 
-			case "godmode-of" -> invisibleFor(pl) == Utils.parseI(condition[1]);
-			case "godmode-lower" -> invisibleFor(pl) < Utils.parseI(condition[1]);
-			case "godmode-higher" -> invisibleFor(pl) > Utils.parseI(condition[1]);
+		if ("pdc-match".equalsIgnoreCase(condition[0]))                     result = getPDCValue(pl, getKey(condition[1], plugin)).equals(condition[2]);
+		else if ("sneaking".equalsIgnoreCase(condition[0]))                 result = sneaking(pl);
+		else if ("sprinting".equalsIgnoreCase(condition[0]))                result = sprinting(pl);
+		else if ("swimming".equalsIgnoreCase(condition[0]))                 result = swimming(pl);
+		else if ("blocking".equalsIgnoreCase(condition[0]))                 result = blocking(pl);
+		else if ("flying".equalsIgnoreCase(condition[0]))                   result = flying(pl);
+		else if ("onfire".equalsIgnoreCase(condition[0]))                   result = onFire(pl);
+		else if ("onhighestblock".equalsIgnoreCase(condition[0]))           result = onTop(pl);
+		else if ("rain".equalsIgnoreCase(condition[0]))                     result = rains(pl);
+		else if ("clear".equalsIgnoreCase(condition[0]))                    result = sunshines(pl);
+		else if ("thunder".equalsIgnoreCase(condition[0]))                  result = thunders(pl);
+		else if ("day".equalsIgnoreCase(condition[0]))                      result = day(pl);
+		else if ("night".equalsIgnoreCase(condition[0]))                    result = night(pl);
+		else if ("overworld".equalsIgnoreCase(condition[0]))                result = overworld(pl);
+		else if ("nether".equalsIgnoreCase(condition[0]))                   result = nether(pl);
+		else if ("end".equalsIgnoreCase(condition[0]))                      result = end(pl);
+		else if ("op".equalsIgnoreCase(condition[0]))                       result = op(pl);
+		else if ("health-of".equalsIgnoreCase(condition[0]))                result = (int) getHealth(pl) == parseD(condition[1]);
+		else if ("health-lower".equalsIgnoreCase(condition[0]))             result = getHealth(pl) < parseD(condition[1]);
+		else if ("health-higher".equalsIgnoreCase(condition[0]))            result = getHealth(pl) > parseD(condition[1]);
+		else if ("healthy".equalsIgnoreCase(condition[0]))                  result = getHealth(pl) == getMaximumHealth(pl);
+		else if ("food-of".equalsIgnoreCase(condition[0]))                  result = getFood(pl) == parseI(condition[1]);
+		else if ("food-lower".equalsIgnoreCase(condition[0]))               result = getFood(pl) < parseI(condition[1]);
+		else if ("food-higher".equalsIgnoreCase(condition[0]))              result = getFood(pl) > parseI(condition[1]);
+		else if ("satiated".equalsIgnoreCase(condition[0]))                 result = getFood(pl) == 20;
+		else if ("air-of".equalsIgnoreCase(condition[0]))                   result = getAir(pl) == parseI(condition[1]);
+		else if ("air-lower".equalsIgnoreCase(condition[0]))                result = getAir(pl) < parseI(condition[1]);
+		else if ("air-higher".equalsIgnoreCase(condition[0]))               result = getAir(pl) > parseI(condition[1]);
+		else if ("oxygenated".equalsIgnoreCase(condition[0]))               result = getAir(pl) == getMaximumAir(pl);
+		else if ("godmode-of".equalsIgnoreCase(condition[0]))               result = invisibleFor(pl) == parseI(condition[1]);
+		else if ("godmode-lower".equalsIgnoreCase(condition[0]))            result = invisibleFor(pl) < parseI(condition[1]);
+		else if ("godmode-higher".equalsIgnoreCase(condition[0]))           result = invisibleFor(pl) > parseI(condition[1]);
 
-			case "sneaked" -> ev.isSneaking();
-			case "unsneaked" -> !ev.isSneaking();
+		else if ("entity-swimming".equalsIgnoreCase(condition[0]))          result = swimming(entity);
+		else if ("entity-onfire".equalsIgnoreCase(condition[0]))            result = onFire(entity);
+		else if ("entity-onhighestblock".equalsIgnoreCase(condition[0]))    result = onTop(entity);
+		else if ("entity-health-of".equalsIgnoreCase(condition[0]))         result = (int) getHealth(entity) == Utils.parseD(condition[1]);
+		else if ("entity-health-lower".equalsIgnoreCase(condition[0]))      result = getHealth(entity) < Utils.parseD(condition[1]);
+		else if ("entity-health-higher".equalsIgnoreCase(condition[0]))     result = getHealth(entity) > Utils.parseD(condition[1]);
+		else if ("entity-healthy".equalsIgnoreCase(condition[0]))           result = getHealth(entity) == getMaximumHealth(entity);
 
-			default -> false;
+		else {
+			for (Pair<String, Boolean> pair : extra) {
+				if (pair.getKey().equalsIgnoreCase(condition[0]))   result = pair.getValue();
+			}
+		}
 
-		};
+		if (result == null) return false;
+
+		if (negate) return !result;
+		else return result;
+	}
+
+	@SafeVarargs
+	private boolean defaultParse(String[] condition, Player pl, Player vic, boolean negate, UnderscoreEnchants plugin, Pair<String, Boolean>... extra) {
+		Boolean result = null;
+
+		if ("pdc-match".equalsIgnoreCase(condition[0]))             result = getPDCValue(pl, getKey(condition[1], plugin)).equals(condition[2]);
+		if ("victim-pdc-match".equalsIgnoreCase(condition[0]))      result = getPDCValue(vic, getKey(condition[1], plugin)).equals(condition[2]);
+
+		if ("sneaking".equalsIgnoreCase(condition[0]))              result = sneaking(pl);
+		if ("sprinting".equalsIgnoreCase(condition[0]))             result = sprinting(pl);
+		if ("swimming".equalsIgnoreCase(condition[0]))              result = swimming(pl);
+		if ("blocking".equalsIgnoreCase(condition[0]))              result = blocking(pl);
+		if ("flying".equalsIgnoreCase(condition[0]))                result = flying(pl);
+
+		if ("onfire".equalsIgnoreCase(condition[0]))                result = onFire(pl);
+		if ("onhighestblock".equalsIgnoreCase(condition[0]))        result = onTop(pl);
+
+		if ("rain".equalsIgnoreCase(condition[0]))                  result = rains(pl);
+		if ("clear".equalsIgnoreCase(condition[0]))                 result = sunshines(pl);
+		if ("thunder".equalsIgnoreCase(condition[0]))               result = thunders(pl);
+
+		if ("day".equalsIgnoreCase(condition[0]))                   result = day(pl);
+		if ("night".equalsIgnoreCase(condition[0]))                 result = night(pl);
+
+		if ("overworld".equalsIgnoreCase(condition[0]))             result = overworld(pl);
+		if ("nether".equalsIgnoreCase(condition[0]))                result = nether(pl);
+		if ("end".equalsIgnoreCase(condition[0]))                   result = end(pl);
+
+		if ("op".equalsIgnoreCase(condition[0]))                    result = op(pl);
+
+		if ("health-of".equalsIgnoreCase(condition[0]))             result = (int) getHealth(pl) == Utils.parseD(condition[1]);
+		if ("health-lower".equalsIgnoreCase(condition[0]))          result = getHealth(pl) < Utils.parseD(condition[1]);
+		if ("health-higher".equalsIgnoreCase(condition[0]))         result = getHealth(pl) > Utils.parseD(condition[1]);
+		if ("healthy".equalsIgnoreCase(condition[0]))               result = getHealth(pl) == getMaximumHealth(pl);
+
+		if ("food-of".equalsIgnoreCase(condition[0]))               result = getFood(pl) == Utils.parseI(condition[1]);
+		if ("food-lower".equalsIgnoreCase(condition[0]))            result = getFood(pl) < Utils.parseI(condition[1]);
+		if ("food-higher".equalsIgnoreCase(condition[0]))           result = getFood(pl) > Utils.parseI(condition[1]);
+		if ("satiated".equalsIgnoreCase(condition[0]))              result = getFood(pl) == 20;
+
+		if ("air-of".equalsIgnoreCase(condition[0]))                result = getAir(pl) == Utils.parseI(condition[1]);
+		if ("air-lower".equalsIgnoreCase(condition[0]))             result = getAir(pl) < Utils.parseI(condition[1]);
+		if ("air-higher".equalsIgnoreCase(condition[0]))            result = getAir(pl) > Utils.parseI(condition[1]);
+		if ("oxygenated".equalsIgnoreCase(condition[0]))            result = getAir(pl) == getMaximumAir(pl);
+
+		if ("godmode-of".equalsIgnoreCase(condition[0]))            result = invisibleFor(pl) == Utils.parseI(condition[1]);
+		if ("godmode-lower".equalsIgnoreCase(condition[0]))         result = invisibleFor(pl) < Utils.parseI(condition[1]);
+		if ("godmode-higher".equalsIgnoreCase(condition[0]))        result = invisibleFor(pl) > Utils.parseI(condition[1]);
+
+		if ("victim-sneaking".equalsIgnoreCase(condition[0]))       result = sneaking(vic);
+		if ("victim-sprinting".equalsIgnoreCase(condition[0]))      result = sprinting(vic);
+		if ("victim-swimming".equalsIgnoreCase(condition[0]))       result = swimming(vic);
+		if ("victim-blocking".equalsIgnoreCase(condition[0]))       result = blocking(vic);
+		if ("victim-flying".equalsIgnoreCase(condition[0]))         result = flying(vic);
+
+		if ("victim-onfire".equalsIgnoreCase(condition[0]))         result = onFire(vic);
+		if ("victim-onhighestblock".equalsIgnoreCase(condition[0])) result = onTop(vic);
+
+		if ("victim-rain".equalsIgnoreCase(condition[0]))           result = rains(vic);
+		if ("victim-clear".equalsIgnoreCase(condition[0]))          result = sunshines(vic);
+		if ("victim-thunder".equalsIgnoreCase(condition[0]))        result = thunders(vic);
+
+		if ("victim-day".equalsIgnoreCase(condition[0]))            result = day(vic);
+		if ("victim-night".equalsIgnoreCase(condition[0]))          result = night(vic);
+
+		if ("victim-overworld".equalsIgnoreCase(condition[0]))      result = overworld(vic);
+		if ("victim-nether".equalsIgnoreCase(condition[0]))         result = nether(vic);
+		if ("victim-end".equalsIgnoreCase(condition[0]))            result = end(vic);
+
+		if ("victim-op".equalsIgnoreCase(condition[0]))             result = op(vic);
+
+		if ("victim-health-of".equalsIgnoreCase(condition[0]))      result = (int) getHealth(vic) == Utils.parseD(condition[1]);
+		if ("victim-health-lower".equalsIgnoreCase(condition[0]))   result = getHealth(vic) < Utils.parseD(condition[1]);
+		if ("victim-health-higher".equalsIgnoreCase(condition[0]))  result = getHealth(vic) > Utils.parseD(condition[1]);
+		if ("victim-healthy".equalsIgnoreCase(condition[0]))        result = getHealth(vic) == getMaximumHealth(vic);
+
+		if ("victim-food-of".equalsIgnoreCase(condition[0]))        result = getFood(vic) == Utils.parseI(condition[1]);
+		if ("victim-food-lower".equalsIgnoreCase(condition[0]))     result = getFood(vic) < Utils.parseI(condition[1]);
+		if ("victim-food-higher".equalsIgnoreCase(condition[0]))    result = getFood(vic) > Utils.parseI(condition[1]);
+		if ("victim-satiated".equalsIgnoreCase(condition[0]))       result = getFood(vic) == 20;
+
+		if ("victim-air-of".equalsIgnoreCase(condition[0]))         result = getAir(vic) == Utils.parseI(condition[1]);
+		if ("victim-air-lower".equalsIgnoreCase(condition[0]))      result = getAir(vic) < Utils.parseI(condition[1]);
+		if ("victim-air-higher".equalsIgnoreCase(condition[0]))     result = getAir(vic) > Utils.parseI(condition[1]);
+		if ("victim-oxygenated".equalsIgnoreCase(condition[0]))     result = getAir(vic) == getMaximumAir(vic);
+
+		if ("victim-godmode-of".equalsIgnoreCase(condition[0]))     result = invisibleFor(vic) == Utils.parseI(condition[1]);
+		if ("victim-godmode-lower".equalsIgnoreCase(condition[0]))  result = invisibleFor(vic) < Utils.parseI(condition[1]);
+		if ("victim-godmode-higher".equalsIgnoreCase(condition[0])) result = invisibleFor(vic) > Utils.parseI(condition[1]);
+
+		else {
+			for (Pair<String, Boolean> pair : extra) {
+				if (pair.getKey().equalsIgnoreCase(condition[0]))   result = pair.getValue();
+			}
+		}
+
+		if (result == null) return false;
 
 		if (negate) return !result;
 		else return result;

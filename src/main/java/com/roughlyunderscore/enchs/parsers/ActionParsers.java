@@ -42,10 +42,13 @@ public class ActionParsers {
 		else if (ev instanceof PlayerToggleSneakEvent event) parseAction(event, action, plugin);
 	}
 
+
+
 	public void parseAction(PlayerPVPEvent ev, String action, UnderscoreEnchants plugin) {
 		Player victim = ev.getVictim(), damager = ev.getDamager();
 		Location victimLocation = getLocation(victim), damagerLocation = getLocation(damager);
-		String[] split = completeParse(action, victimLocation.getWorld(),
+
+		String[] split = completeParse(new PDCPlaceholder(victim, damager), action, victimLocation.getWorld(), plugin,
 			Pair.of("%damage%",                     String.valueOf(ev.getDamage())),
 			Pair.of("%victim_name%",                victim.getName()),
 			Pair.of("%damager_name%",               damager.getName()),
@@ -87,7 +90,7 @@ public class ActionParsers {
 	public void parseAction(ArmorEquipEvent ev, String action, UnderscoreEnchants plugin) {
 		Player player = ev.getPlayer();
 		Location location = player.getLocation();
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -115,7 +118,7 @@ public class ActionParsers {
 		Location location = player.getLocation();
 		Block block = ev.getBlock();
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -145,7 +148,8 @@ public class ActionParsers {
 	public void parseAction(PlayerBowHitEvent ev, String action, UnderscoreEnchants plugin) {
 		Player victim = ev.getVictim(), damager = ev.getDamager();
 		Location victimLocation = getLocation(victim), damagerLocation = getLocation(damager);
-		String[] split = completeParse(action, victimLocation.getWorld(),
+
+		String[] split = completeParse(new PDCPlaceholder(victim, damager), action, victimLocation.getWorld(), plugin,
 			Pair.of("%damage%",                     String.valueOf(ev.getDamage())),
 			Pair.of("%victim_name%",                victim.getName()),
 			Pair.of("%damager_name%",               damager.getName()),
@@ -189,7 +193,7 @@ public class ActionParsers {
 		Location location = player.getLocation();
 		ItemStack item = ev.getBrokenItem();
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -218,7 +222,7 @@ public class ActionParsers {
 		Location location = player.getLocation();
 		ItemStack item = ev.getItem();
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -247,7 +251,7 @@ public class ActionParsers {
 		Location location = player.getLocation();
 		Block block = ev.getClickedBlock() == null ? location.getWorld().getBlockAt(0, 0, 0) : ev.getClickedBlock(); // null check
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -279,7 +283,7 @@ public class ActionParsers {
 		Location location = player.getLocation();
 		Entity entity = ev.getRightClicked();
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -316,7 +320,7 @@ public class ActionParsers {
 		Location from = ev.getFrom().clone().subtract(0, 1, 0);
 		Location to = (ev.getTo() == null ? ev.getFrom() : ev.getTo()).clone().subtract(0, 1, 0); // null check
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -352,7 +356,7 @@ public class ActionParsers {
 		Location location = player.getLocation();
 		double damage = ev.getDamage();
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -382,7 +386,7 @@ public class ActionParsers {
 		Location location = player.getLocation();
 		double damage = ev.getDamage();
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -419,7 +423,7 @@ public class ActionParsers {
 		Location location = player.getLocation();
 		float force = ev.getForce();
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -447,7 +451,7 @@ public class ActionParsers {
 		Player player = ev.getPlayer();
 		Location location = player.getLocation();
 
-		String[] split = completeParse(action, location.getWorld(),
+		String[] split = completeParse(new PDCPlaceholder(player), action, location.getWorld(), plugin,
 			Pair.of("%player_name%",                player.getName()),
 			Pair.of("%player_x%",                   getXString(player)),
 			Pair.of("%player_y%",                   getYString(player)),
@@ -469,6 +473,9 @@ public class ActionParsers {
 
 		standardParse(plugin, player, location, split);
 	}
+
+
+
 
 	// Don't Repeat Yourself
 	private void standardParse(UnderscoreEnchants plugin, Player player, Location location, String[] split) {

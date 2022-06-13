@@ -35,6 +35,7 @@
                 <version>3.3.0-SNAPSHOT</version>
                 <configuration>
                     <relocations>
+
                         <relocation>
                             <pattern>com.cryptomorin.xseries</pattern>
                             <shadedPattern>com.roughlyunderscore.enchs.UnderscoreEnchants.libs</shadedPattern>
@@ -43,10 +44,7 @@
                             <pattern>de.jeff_media.updatechecker</pattern>
                             <shadedPattern>com.roughlyunderscore.enchs.UnderscoreEnchants.libs</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>com.roughlyunderscore.enchantsapi</pattern>
-                            <shadedPattern>com.roughlyunderscore.enchs.UnderscoreEnchants.libs</shadedPattern>
-                        </relocation>
+
                     </relocations>
                     <filters>
                         <filter>
@@ -55,6 +53,7 @@
                                 <exclude>com/cryptomorin/xseries/XBiome*</exclude>
                                 <exclude>com/cryptomorin/xseries/NMSExtras*</exclude>
                                 <exclude>com/cryptomorin/xseries/NoteBlockMusic*</exclude>
+                                <exclude>com/roughlyunderscore/enchantsapi/**</exclude>
                             </excludes>
                         </filter>
                     </filters>

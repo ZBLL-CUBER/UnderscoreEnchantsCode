@@ -3,6 +3,7 @@ package com.roughlyunderscore.enchs.util.general;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.ImmutableMap;
+import com.roughlyunderscore.enchs.parsers.PDCPlaceholder;
 import com.roughlyunderscore.enchs.util.Pair;
 import com.roughlyunderscore.enchs.UnderscoreEnchants;
 import com.roughlyunderscore.enchs.enchants.abstracts.AbstractEnchantment;
@@ -190,11 +191,12 @@ public class Utils {
      * A utility for action parsers to parse the %random% placeholders and numerical expressions.
      * @param action an action to parse in the form of {@link String}
      * @param world the {@link World} to work with while parsing max Y
+     * @param players a {@link PDCPlaceholder} object to parse the PDC placeholders
+     * @param plugin UnderscoreEnchants
      * @return an array of {@link String} objects, containing the parsed values separated with a space
      */
-    public String[] parseRandomAndExpression(String action, World world) {
-        Pattern intPattern = Pattern.compile("%random_int_([-]?[0-9]+)_([-]?[0-9]+)%");
-        Matcher intMatcher = intPattern.matcher(action);
+    public String[] parseRandomAndExpression(String action, World world, PDCPlaceholder players, UnderscoreEnchants plugin) {
+        Matcher intMatcher = Pattern.compile("%random_int_([-]?[0-9]+)_([-]?[0-9]+)%").matcher(action);
         StringBuilder intBuffer = new StringBuilder();
 
         while (intMatcher.find()) {
@@ -206,8 +208,7 @@ public class Utils {
         intMatcher.appendTail(intBuffer);
         action = intBuffer.toString();
 
-        Pattern doublePattern = Pattern.compile("%random_double_([-]?[0-9]+[.][0-9]+)_([-]?[0-9]+[.][0-9]+)%");
-        Matcher doubleMatcher = doublePattern.matcher(action);
+        Matcher doubleMatcher = Pattern.compile("%random_double_([-]?[0-9]+[.][0-9]+)_([-]?[0-9]+[.][0-9]+)%").matcher(action);
         StringBuilder doubleBuffer = new StringBuilder();
 
         while (doubleMatcher.find()) {
@@ -220,8 +221,7 @@ public class Utils {
         action = doubleBuffer.toString();
 
 
-        Pattern maxYPattern = Pattern.compile("%max_y_at_([-]?[0-9]+)_([-]?[0-9]+)%");
-        Matcher maxYMatcher = maxYPattern.matcher(action);
+        Matcher maxYMatcher = Pattern.compile("%max_y_at_([-]?[0-9]+)_([-]?[0-9]+)%").matcher(action);
         StringBuilder maxYBuilder = new StringBuilder();
 
         while (maxYMatcher.find()) {
@@ -235,6 +235,47 @@ public class Utils {
 
         String[] split0 = action.split(" ");
         String[] split = new String[split0.length];
+
+        if (players.getSize() == 1) {
+            Matcher playerMatcher = Pattern.compile("%player_pdc_(.+)%").matcher(action);
+
+            StringBuilder playerBuilder = new StringBuilder();
+
+            while (playerMatcher.find()) {
+                String arg = playerMatcher.group(1);
+                String val = String.valueOf(getPDCValue(players.getPlayers()[0], getKey(arg, plugin)));
+                playerMatcher.appendReplacement(playerBuilder, val);
+            }
+
+            playerMatcher.appendTail(playerBuilder);
+            action = playerBuilder.toString();
+        }
+        else {
+            Matcher victimMatcher = Pattern.compile("%victim_pdc_(.+)%").matcher(action);
+            Matcher damagerMatcher = Pattern.compile("%damager_pdc_(.+)%").matcher(action);
+
+            StringBuilder victimBuilder = new StringBuilder();
+            StringBuilder damagerBuilder = new StringBuilder();
+
+            while (victimMatcher.find()) {
+                String arg = victimMatcher.group(1);
+                String val = String.valueOf(getPDCValue(players.getPlayers()[0], getKey(arg, plugin)));
+                victimMatcher.appendReplacement(victimBuilder, val);
+            }
+
+            victimMatcher.appendTail(victimBuilder);
+            action = victimBuilder.toString();
+
+            while (damagerMatcher.find()) {
+                String arg = damagerMatcher.group(1);
+                String val = String.valueOf(getPDCValue(players.getPlayers()[1], getKey(arg, plugin)));
+                damagerMatcher.appendReplacement(damagerBuilder, val);
+            }
+
+            damagerMatcher.appendTail(damagerBuilder);
+            action = damagerBuilder.toString();
+        }
+
 
         for (int i = 0; i < split0.length; i++) {
             String test = String.valueOf(new Expression(split0[i]).calculate());
@@ -261,14 +302,14 @@ public class Utils {
     }
 
     /**
-     * A utility, combining {@link #replacePlaceholders(String, Pair[])} and {@link #parseRandomAndExpression(String, World)}.
+     * A utility, combining {@link #replacePlaceholders(String, Pair[])} and {@link #parseRandomAndExpression(String, World, PDCPlaceholder, UnderscoreEnchants)}.
      * @param input a {@link String} to parse
      * @param pairs {@link #replacePlaceholders(String, Pair[])}
      * @return the result of parsing in the form of a {@link String} array
      */
     @SafeVarargs
-    public String[] completeParse(String input, World world, Pair<String, String>... pairs) {
-        return parseRandomAndExpression(replacePlaceholders(input, pairs), world);
+    public String[] completeParse(PDCPlaceholder players, String input, World world, UnderscoreEnchants plugin, Pair<String, String>... pairs) {
+        return parseRandomAndExpression(replacePlaceholders(input, pairs), world, players, plugin);
     }
 
     /**
