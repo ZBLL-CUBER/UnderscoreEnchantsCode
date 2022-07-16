@@ -50,6 +50,7 @@ import java.util.regex.Pattern;
 import java.net.URL;
 
 import static com.roughlyunderscore.enchs.UnderscoreEnchants.STATIC_EMPTY;
+import static com.roughlyunderscore.enchs.UnderscoreEnchants.staticEnchantmentData;
 import static com.roughlyunderscore.enchs.util.general.PlayerUtils.*;
 
 @UtilityClass @SuppressWarnings({"unused", "deprecation"})
@@ -136,41 +137,41 @@ public class Utils {
      * @return the name in a form of {@link String}
      */
     public String getName(Enchantment ench) {
-        if (ench == XEnchantment.ARROW_DAMAGE.getEnchant()) return "Power";
-        else if (ench == XEnchantment.DAMAGE_ARTHROPODS.getEnchant()) return "Bane of Arthropods";
-        else if (ench == XEnchantment.ARROW_KNOCKBACK.getEnchant()) return "Punch";
-        else if (ench == XEnchantment.DAMAGE_ALL.getEnchant()) return "Sharpness";
-        else if (ench == XEnchantment.THORNS.getEnchant()) return "Thorns";
-        else if (ench == XEnchantment.WATER_WORKER.getEnchant()) return "Aqua Affinity";
-        else if (ench == XEnchantment.KNOCKBACK.getEnchant()) return "Knockback";
-        else if (ench == XEnchantment.ARROW_INFINITE.getEnchant()) return "Infinity";
-        else if (ench == XEnchantment.PROTECTION_ENVIRONMENTAL.getEnchant()) return "Protection";
-        else if (ench == XEnchantment.ARROW_FIRE.getEnchant()) return "Flame";
-        else if (ench == XEnchantment.SILK_TOUCH.getEnchant()) return "Silk Touch";
-        else if (ench == XEnchantment.PROTECTION_PROJECTILE.getEnchant()) return "Projectile Protection";
-        else if (ench == XEnchantment.PROTECTION_FIRE.getEnchant()) return "Fire Protection";
-        else if (ench == XEnchantment.PROTECTION_EXPLOSIONS.getEnchant()) return "Blast Protection";
-        else if (ench == XEnchantment.PROTECTION_FALL.getEnchant()) return "Feather Falling";
-        else if (ench == XEnchantment.OXYGEN.getEnchant()) return "Respiration";
-        else if (ench == XEnchantment.LURE.getEnchant()) return "Lure";
-        else if (ench == XEnchantment.LUCK.getEnchant()) return "Luck of the Sea";
-        else if (ench == XEnchantment.FIRE_ASPECT.getEnchant()) return "Fire Aspect";
-        else if (ench == XEnchantment.DEPTH_STRIDER.getEnchant()) return "Depth Strider";
-        else if (ench == XEnchantment.DAMAGE_UNDEAD.getEnchant()) return "Smite";
-        else if (ench == XEnchantment.DIG_SPEED.getEnchant()) return "Efficiency";
-        else if (ench == XEnchantment.LOOT_BONUS_BLOCKS.getEnchant()) return "Fortune";
-        else if (ench == XEnchantment.LOOT_BONUS_MOBS.getEnchant()) return "Looting";
-        else if (ench == XEnchantment.DURABILITY.getEnchant()) return "Unbreaking";
-        else if (ench == XEnchantment.VANISHING_CURSE.getEnchant()) return "Curse of Vanishing";
-        else if (ench == XEnchantment.BINDING_CURSE.getEnchant()) return "Curse of Binding";
-        else if (ench == XEnchantment.SWEEPING_EDGE.getEnchant()) return "Sweeping Edge";
-        else if (ench == XEnchantment.MENDING.getEnchant()) return "Mending";
-        else if (ench == XEnchantment.SOUL_SPEED.getEnchant()) return "Soul Speed";
-        else if (ench == XEnchantment.FROST_WALKER.getEnchant()) return "Frost Walker";
-        else if (ench == XEnchantment.RIPTIDE.getEnchant()) return "Riptide";
-        else if (ench == XEnchantment.IMPALING.getEnchant()) return "Impaling";
-        else if (ench == XEnchantment.LOYALTY.getEnchant()) return "Loyalty";
-        else if (ench == XEnchantment.CHANNELING.getEnchant()) return "Channeling";
+        if (ench.equals(XEnchantment.ARROW_DAMAGE.getEnchant())) return "Power";
+        else if (ench.equals(XEnchantment.DAMAGE_ARTHROPODS.getEnchant())) return "Bane of Arthropods";
+        else if (ench.equals(XEnchantment.ARROW_KNOCKBACK.getEnchant())) return "Punch";
+        else if (ench.equals(XEnchantment.DAMAGE_ALL.getEnchant())) return "Sharpness";
+        else if (ench.equals(XEnchantment.THORNS.getEnchant())) return "Thorns";
+        else if (ench.equals(XEnchantment.WATER_WORKER.getEnchant())) return "Aqua Affinity";
+        else if (ench.equals(XEnchantment.KNOCKBACK.getEnchant())) return "Knockback";
+        else if (ench.equals(XEnchantment.ARROW_INFINITE.getEnchant())) return "Infinity";
+        else if (ench.equals(XEnchantment.PROTECTION_ENVIRONMENTAL.getEnchant())) return "Protection";
+        else if (ench.equals(XEnchantment.ARROW_FIRE.getEnchant())) return "Flame";
+        else if (ench.equals(XEnchantment.SILK_TOUCH.getEnchant())) return "Silk Touch";
+        else if (ench.equals(XEnchantment.PROTECTION_PROJECTILE.getEnchant())) return "Projectile Protection";
+        else if (ench.equals(XEnchantment.PROTECTION_FIRE.getEnchant())) return "Fire Protection";
+        else if (ench.equals(XEnchantment.PROTECTION_EXPLOSIONS.getEnchant())) return "Blast Protection";
+        else if (ench.equals(XEnchantment.PROTECTION_FALL.getEnchant())) return "Feather Falling";
+        else if (ench.equals(XEnchantment.OXYGEN.getEnchant())) return "Respiration";
+        else if (ench.equals(XEnchantment.LURE.getEnchant())) return "Lure";
+        else if (ench.equals(XEnchantment.LUCK.getEnchant())) return "Luck of the Sea";
+        else if (ench.equals(XEnchantment.FIRE_ASPECT.getEnchant())) return "Fire Aspect";
+        else if (ench.equals(XEnchantment.DEPTH_STRIDER.getEnchant())) return "Depth Strider";
+        else if (ench.equals(XEnchantment.DAMAGE_UNDEAD.getEnchant())) return "Smite";
+        else if (ench.equals(XEnchantment.DIG_SPEED.getEnchant())) return "Efficiency";
+        else if (ench.equals(XEnchantment.LOOT_BONUS_BLOCKS.getEnchant())) return "Fortune";
+        else if (ench.equals(XEnchantment.LOOT_BONUS_MOBS.getEnchant())) return "Looting";
+        else if (ench.equals(XEnchantment.DURABILITY.getEnchant())) return "Unbreaking";
+        else if (ench.equals(XEnchantment.VANISHING_CURSE.getEnchant())) return "Curse of Vanishing";
+        else if (ench.equals(XEnchantment.BINDING_CURSE.getEnchant())) return "Curse of Binding";
+        else if (ench.equals(XEnchantment.SWEEPING_EDGE.getEnchant())) return "Sweeping Edge";
+        else if (ench.equals(XEnchantment.MENDING.getEnchant())) return "Mending";
+        else if (ench.equals(XEnchantment.SOUL_SPEED.getEnchant())) return "Soul Speed";
+        else if (ench.equals(XEnchantment.FROST_WALKER.getEnchant())) return "Frost Walker";
+        else if (ench.equals(XEnchantment.RIPTIDE.getEnchant())) return "Riptide";
+        else if (ench.equals(XEnchantment.IMPALING.getEnchant())) return "Impaling";
+        else if (ench.equals(XEnchantment.LOYALTY.getEnchant())) return "Loyalty";
+        else if (ench.equals(XEnchantment.CHANNELING.getEnchant())) return "Channeling";
         else return ench.getName();
     }
 
@@ -239,7 +240,7 @@ public class Utils {
         if (players.getSize() == 1) {
             Matcher playerMatcher = Pattern.compile("%player_pdc_(.+)%").matcher(action);
 
-            StringBuilder playerBuilder = new StringBuilder();
+            StringBuffer playerBuilder = new StringBuffer();
 
             while (playerMatcher.find()) {
                 String arg = playerMatcher.group(1);
@@ -852,7 +853,7 @@ public class Utils {
     /**
      * Generates multiple lore lines for multiple enchantments.
      * @param enchantments a map of enchantments and their corresponding enchantments
-     * @return
+     * @return the generated lore line
      */
     public List<String> generateLoreLine(HashMap<Enchantment, Integer> enchantments) {
         List<String> lore = new ArrayList<>();
@@ -864,7 +865,7 @@ public class Utils {
      * Combines two lists of lores and removes the duplicates.
      * @param existingLore the first list
      * @param newLore the second list
-     * @return
+     * @return the un-duplicated lore
      */
     public List<String> clearDuplicateLore(List<String> existingLore, List<String> newLore) {
         if (existingLore == null || existingLore.isEmpty()) return newLore;                             // Deal with null and empty
@@ -1019,6 +1020,23 @@ public class Utils {
         else return new DetailedEnchantment(ench.getKey());
     }
 
+    // two debug methods, used before and maybe will be used later
+    private String tellMeTheStaticEnchantmentData() {
+        StringBuilder builder = new StringBuilder();
+        for (DetailedEnchantment en : staticEnchantmentData) {
+            builder.append(en.getName()).append(" / ").append(en.getKey()).append("\n");
+        }
+        return builder.toString();
+    }
+
+    private String tellMeTheDefaultEnchantmentData() {
+        StringBuilder builder = new StringBuilder();
+        for (Enchantment en : Enchantment.values()) {
+            builder.append(en.getName()).append(" / ").append(en.getKey()).append("\n");
+        }
+        return builder.toString();
+    }
+
     /**
      * Parses an enchantment by name.
      * @param name the enchantment name
@@ -1027,8 +1045,9 @@ public class Utils {
     public DetailedEnchantment parseEnchantment(String name) {
 
         if (UnderscoreEnchants.staticEnchantmentData.stream().noneMatch(ench -> ench.getCommandName().equalsIgnoreCase(name))) {
-            if (Arrays.stream(Enchantment.values()).noneMatch(ench -> getName(ench).replace(" ", "_").equalsIgnoreCase(name)))
+            if (Arrays.stream(Enchantment.values()).noneMatch(ench -> getName(ench).replace(" ", "_").equalsIgnoreCase(name))) {
                 return STATIC_EMPTY; // returns the placeholder if there's no enchantment with such name
+            }
         }
 
         Enchantment ench;
@@ -1038,7 +1057,9 @@ public class Utils {
             ench = optional.get().getEnchantment(); // sets the enchantment to the received one (this is a custom enchantment)
         } else {
             Optional<Enchantment> opt = Arrays.stream(Enchantment.values()).filter(enchn -> getName(enchn).replace(" ", "_").equalsIgnoreCase(name)).findFirst();
-            if (opt.isPresent()) ench = opt.get(); // sets the enchantment to the received one (this is a default enchantment)
+            if (opt.isPresent()) {
+                ench = opt.get(); // sets the enchantment to the received one (this is a default enchantment)
+            }
             else return STATIC_EMPTY; // returns the placeholder if such enchantment somehow does not exist
         }
 

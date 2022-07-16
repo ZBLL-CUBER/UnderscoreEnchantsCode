@@ -2,6 +2,7 @@ package com.roughlyunderscore.enchs.util.data;
 
 import com.roughlyunderscore.enchs.UnderscoreEnchants;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 
@@ -11,7 +12,7 @@ import java.util.Objects;
 /*
 This is a way of storing an Enchantment and a lot of necessary data in one class.
  */
-@EqualsAndHashCode
+@EqualsAndHashCode @ToString
 public class DetailedEnchantment {
     private final NamespacedKey key;
 

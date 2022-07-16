@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
@@ -25,7 +26,6 @@ import java.util.Locale;
 import static com.roughlyunderscore.enchs.util.general.EntityUtils.*;
 import static com.roughlyunderscore.enchs.util.general.PlayerUtils.*;
 import static com.roughlyunderscore.enchs.util.general.Utils.*;
-import static com.roughlyunderscore.enchs.util.general.EntityUtils.*;
 
 @UtilityClass
 public class ConditionParsers {
@@ -277,7 +277,18 @@ public class ConditionParsers {
 			negate = true;
 		}
 
+		if (condition.length == 1) {
+			String temp = condition[0];
+			condition = new String[2];
+			condition[0] = temp;
+		}
+
 		return defaultParse(condition, pl, negate, plugin,
+			Pair.of("damage-of", Math.floor(damage) == Utils.parseD(condition[1])),
+			Pair.of("damage-lower", damage < Utils.parseD(condition[1])),
+			Pair.of("damage-higher", damage > Utils.parseD(condition[1])),
+			Pair.of("damage-lethal", damage >= getHealth(pl)),
+			Pair.of("damage-non-lethal", damage < getHealth(pl)),
 			Pair.of("caused-by-block-explosion", ev.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION),
 			Pair.of("caused-by-hazardous-block", ev.getCause() == EntityDamageEvent.DamageCause.CONTACT),
 			Pair.of("caused-by-entity-cramming", ev.getCause() == EntityDamageEvent.DamageCause.CRAMMING),
@@ -324,12 +335,14 @@ public class ConditionParsers {
 			negate = true;
 		}
 
+		if (!(entity instanceof LivingEntity liv)) return false;
+
 		return defaultParse(condition, pl, entity, negate, plugin,
 			Pair.of("damage-of", Math.floor(damage) == Utils.parseD(condition[1])),
 			Pair.of("damage-lower", damage < Utils.parseD(condition[1])),
 			Pair.of("damage-higher", damage > Utils.parseD(condition[1])),
-			Pair.of("damage-lethal", damage >= getHealth(entity)),
-			Pair.of("damage-non-lethal", damage < getHealth(entity))
+			Pair.of("damage-lethal", damage >= liv.getHealth()),
+			Pair.of("damage-non-lethal", damage < liv.getHealth())
 		);
 
 	}
@@ -428,50 +441,53 @@ public class ConditionParsers {
 	private boolean defaultParse(String[] condition, Player pl, Entity entity, boolean negate, UnderscoreEnchants plugin, Pair<String, Boolean>... extra) {
 		Boolean result = null;
 
-		if ("pdc-match".equalsIgnoreCase(condition[0]))                     result = getPDCValue(pl, getKey(condition[1], plugin)).equals(condition[2]);
-		else if ("sneaking".equalsIgnoreCase(condition[0]))                 result = sneaking(pl);
-		else if ("sprinting".equalsIgnoreCase(condition[0]))                result = sprinting(pl);
-		else if ("swimming".equalsIgnoreCase(condition[0]))                 result = swimming(pl);
-		else if ("blocking".equalsIgnoreCase(condition[0]))                 result = blocking(pl);
-		else if ("flying".equalsIgnoreCase(condition[0]))                   result = flying(pl);
-		else if ("onfire".equalsIgnoreCase(condition[0]))                   result = onFire(pl);
-		else if ("onhighestblock".equalsIgnoreCase(condition[0]))           result = onTop(pl);
-		else if ("rain".equalsIgnoreCase(condition[0]))                     result = rains(pl);
-		else if ("clear".equalsIgnoreCase(condition[0]))                    result = sunshines(pl);
-		else if ("thunder".equalsIgnoreCase(condition[0]))                  result = thunders(pl);
-		else if ("day".equalsIgnoreCase(condition[0]))                      result = day(pl);
-		else if ("night".equalsIgnoreCase(condition[0]))                    result = night(pl);
-		else if ("overworld".equalsIgnoreCase(condition[0]))                result = overworld(pl);
-		else if ("nether".equalsIgnoreCase(condition[0]))                   result = nether(pl);
-		else if ("end".equalsIgnoreCase(condition[0]))                      result = end(pl);
-		else if ("op".equalsIgnoreCase(condition[0]))                       result = op(pl);
-		else if ("health-of".equalsIgnoreCase(condition[0]))                result = (int) getHealth(pl) == parseD(condition[1]);
-		else if ("health-lower".equalsIgnoreCase(condition[0]))             result = getHealth(pl) < parseD(condition[1]);
-		else if ("health-higher".equalsIgnoreCase(condition[0]))            result = getHealth(pl) > parseD(condition[1]);
-		else if ("healthy".equalsIgnoreCase(condition[0]))                  result = getHealth(pl) == getMaximumHealth(pl);
-		else if ("food-of".equalsIgnoreCase(condition[0]))                  result = getFood(pl) == parseI(condition[1]);
-		else if ("food-lower".equalsIgnoreCase(condition[0]))               result = getFood(pl) < parseI(condition[1]);
-		else if ("food-higher".equalsIgnoreCase(condition[0]))              result = getFood(pl) > parseI(condition[1]);
-		else if ("satiated".equalsIgnoreCase(condition[0]))                 result = getFood(pl) == 20;
-		else if ("air-of".equalsIgnoreCase(condition[0]))                   result = getAir(pl) == parseI(condition[1]);
-		else if ("air-lower".equalsIgnoreCase(condition[0]))                result = getAir(pl) < parseI(condition[1]);
-		else if ("air-higher".equalsIgnoreCase(condition[0]))               result = getAir(pl) > parseI(condition[1]);
-		else if ("oxygenated".equalsIgnoreCase(condition[0]))               result = getAir(pl) == getMaximumAir(pl);
-		else if ("godmode-of".equalsIgnoreCase(condition[0]))               result = invisibleFor(pl) == parseI(condition[1]);
-		else if ("godmode-lower".equalsIgnoreCase(condition[0]))            result = invisibleFor(pl) < parseI(condition[1]);
-		else if ("godmode-higher".equalsIgnoreCase(condition[0]))           result = invisibleFor(pl) > parseI(condition[1]);
+		if (entity instanceof LivingEntity lEntity) {
 
-		else if ("entity-swimming".equalsIgnoreCase(condition[0]))          result = swimming(entity);
-		else if ("entity-onfire".equalsIgnoreCase(condition[0]))            result = onFire(entity);
-		else if ("entity-onhighestblock".equalsIgnoreCase(condition[0]))    result = onTop(entity);
-		else if ("entity-health-of".equalsIgnoreCase(condition[0]))         result = (int) getHealth(entity) == Utils.parseD(condition[1]);
-		else if ("entity-health-lower".equalsIgnoreCase(condition[0]))      result = getHealth(entity) < Utils.parseD(condition[1]);
-		else if ("entity-health-higher".equalsIgnoreCase(condition[0]))     result = getHealth(entity) > Utils.parseD(condition[1]);
-		else if ("entity-healthy".equalsIgnoreCase(condition[0]))           result = getHealth(entity) == getMaximumHealth(entity);
+			if ("pdc-match".equalsIgnoreCase(condition[0])) result = getPDCValue(pl, getKey(condition[1], plugin)).equals(condition[2]);
+			else if ("sneaking".equalsIgnoreCase(condition[0])) result = sneaking(pl);
+			else if ("sprinting".equalsIgnoreCase(condition[0])) result = sprinting(pl);
+			else if ("swimming".equalsIgnoreCase(condition[0])) result = swimming(pl);
+			else if ("blocking".equalsIgnoreCase(condition[0])) result = blocking(pl);
+			else if ("flying".equalsIgnoreCase(condition[0])) result = flying(pl);
+			else if ("onfire".equalsIgnoreCase(condition[0])) result = onFire(pl);
+			else if ("onhighestblock".equalsIgnoreCase(condition[0])) result = onTop(pl);
+			else if ("rain".equalsIgnoreCase(condition[0])) result = rains(pl);
+			else if ("clear".equalsIgnoreCase(condition[0])) result = sunshines(pl);
+			else if ("thunder".equalsIgnoreCase(condition[0])) result = thunders(pl);
+			else if ("day".equalsIgnoreCase(condition[0])) result = day(pl);
+			else if ("night".equalsIgnoreCase(condition[0])) result = night(pl);
+			else if ("overworld".equalsIgnoreCase(condition[0])) result = overworld(pl);
+			else if ("nether".equalsIgnoreCase(condition[0])) result = nether(pl);
+			else if ("end".equalsIgnoreCase(condition[0])) result = end(pl);
+			else if ("op".equalsIgnoreCase(condition[0])) result = op(pl);
+			else if ("health-of".equalsIgnoreCase(condition[0])) result = (int) getHealth(pl) == parseD(condition[1]);
+			else if ("health-lower".equalsIgnoreCase(condition[0])) result = getHealth(pl) < parseD(condition[1]);
+			else if ("health-higher".equalsIgnoreCase(condition[0])) result = getHealth(pl) > parseD(condition[1]);
+			else if ("healthy".equalsIgnoreCase(condition[0])) result = getHealth(pl) == getMaximumHealth(pl);
+			else if ("food-of".equalsIgnoreCase(condition[0])) result = getFood(pl) == parseI(condition[1]);
+			else if ("food-lower".equalsIgnoreCase(condition[0])) result = getFood(pl) < parseI(condition[1]);
+			else if ("food-higher".equalsIgnoreCase(condition[0])) result = getFood(pl) > parseI(condition[1]);
+			else if ("satiated".equalsIgnoreCase(condition[0])) result = getFood(pl) == 20;
+			else if ("air-of".equalsIgnoreCase(condition[0])) result = getAir(pl) == parseI(condition[1]);
+			else if ("air-lower".equalsIgnoreCase(condition[0])) result = getAir(pl) < parseI(condition[1]);
+			else if ("air-higher".equalsIgnoreCase(condition[0])) result = getAir(pl) > parseI(condition[1]);
+			else if ("oxygenated".equalsIgnoreCase(condition[0])) result = getAir(pl) == getMaximumAir(pl);
+			else if ("godmode-of".equalsIgnoreCase(condition[0])) result = invisibleFor(pl) == parseI(condition[1]);
+			else if ("godmode-lower".equalsIgnoreCase(condition[0])) result = invisibleFor(pl) < parseI(condition[1]);
+			else if ("godmode-higher".equalsIgnoreCase(condition[0])) result = invisibleFor(pl) > parseI(condition[1]);
 
-		else {
-			for (Pair<String, Boolean> pair : extra) {
-				if (pair.getKey().equalsIgnoreCase(condition[0]))   result = pair.getValue();
+			else if ("entity-swimming".equalsIgnoreCase(condition[0])) result = swimming(entity);
+			else if ("entity-onfire".equalsIgnoreCase(condition[0])) result = onFire(entity);
+			else if ("entity-onhighestblock".equalsIgnoreCase(condition[0])) result = onTop(entity);
+			else if ("entity-health-of".equalsIgnoreCase(condition[0])) result = (int) lEntity.getHealth() == Utils.parseD(condition[1]);
+			else if ("entity-health-lower".equalsIgnoreCase(condition[0])) result = lEntity.getHealth() < Utils.parseD(condition[1]);
+			else if ("entity-health-higher".equalsIgnoreCase(condition[0])) result = lEntity.getHealth() > Utils.parseD(condition[1]);
+			else if ("entity-healthy".equalsIgnoreCase(condition[0])) result = lEntity.getHealth() == getMaximumHealth(entity);
+
+			else {
+				for (Pair<String, Boolean> pair : extra) {
+					if (pair.getKey().equalsIgnoreCase(condition[0])) result = pair.getValue();
+				}
 			}
 		}
 

@@ -40,6 +40,7 @@ public class AnvilGUI implements Listener {
     private final UnderscoreEnchants plugin;
     private final int combined0 = 10;
     private final int combinee0 = 12;
+    private final int result0 = 16;
 
     @EventHandler
     public void onClick(InventoryClickEvent ev) {
@@ -49,7 +50,6 @@ public class AnvilGUI implements Listener {
         // variables
         Player player = (Player) ev.getWhoClicked();
         int clicked0 = ev.getSlot();
-        int result0 = 16;
 
         Inventory top = ev.getView().getTopInventory();
         Inventory bottom = ev.getView().getBottomInventory();
@@ -255,15 +255,22 @@ public class AnvilGUI implements Listener {
 
                 }
             }
+
+            if (ev.getInventory().getItem(result0) != null) {
+                if (!isPane(ev.getInventory().getItem(result0))) {
+                    ev.getPlayer().getInventory().addItem(ev.getInventory().getItem(result0));
+
+                }
+            }
         }
     }
 
-    @EventHandler(priority = org.bukkit.event.EventPriority.LOWEST)
-    public void onQuit(PlayerQuitEvent ev) {
-        if (ev.getPlayer().getOpenInventory().getTopInventory().getHolder() instanceof AnvilHolder) {
-            Bukkit.getPluginManager().callEvent(new InventoryCloseEvent(ev.getPlayer().getOpenInventory()));
-        }
-    }
+    //@EventHandler(priority = org.bukkit.event.EventPriority.LOWEST)
+    //public void onQuit(PlayerQuitEvent ev) {
+    //    if (ev.getPlayer().getOpenInventory().getTopInventory().getHolder() instanceof AnvilHolder) {
+    //        Bukkit.getPluginManager().callEvent(new InventoryCloseEvent(ev.getPlayer().getOpenInventory()));
+    //    }
+    //}
 
     boolean goodTypes(ItemStack first, ItemStack second) {
         Material type = first.getType();

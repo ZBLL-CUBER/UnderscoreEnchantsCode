@@ -186,11 +186,13 @@ public class UnderscoreEnchantsCommand implements CommandExecutor {
 
                     // Enchant the item
                     Pair<ItemStack, Map<Enchantment, Integer>> pair = enchant(handItem, ench.getEnchantment(), level);
-                    if (!pair.getValue().isEmpty()) {
+                    if (pair.getValue() != null && !pair.getValue().isEmpty()) {
                         playSound(player, XSound.ENTITY_VILLAGER_NO);
                         return false;
                     }
+
                     if (pair.getKey() == null) return false;
+
 
                     player.sendMessage(plugin.getMessages().ENCHANTED.replace("%name%", Utils.getName(ench.getEnchantment())).replace("%level%", String.valueOf(level)));
                     player.getInventory().setItemInMainHand(pair.getKey());

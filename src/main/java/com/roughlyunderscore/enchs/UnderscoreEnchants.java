@@ -2,6 +2,7 @@ package com.roughlyunderscore.enchs;
 
 import com.codingforcookies.armorequip.*;
 import com.cryptomorin.xseries.*;
+import com.roughlyunderscore.enchantsapi.UEnchantsAPI;
 import com.roughlyunderscore.enchs.commands.TabComplete;
 import com.roughlyunderscore.enchs.commands.UnderscoreEnchantsCommand;
 import com.roughlyunderscore.enchs.enchants.EnchantmentLevel;
@@ -18,6 +19,7 @@ import static com.roughlyunderscore.enchs.registration.Register.*;
 
 import com.roughlyunderscore.enchs.gui.AnvilGUI;
 import com.roughlyunderscore.enchs.gui.EnchantGUI;
+import com.roughlyunderscore.enchs.util.general.Utils;
 import de.jeff_media.updatechecker.*;
 import lombok.Getter;
 import lombok.NonNull;
@@ -28,9 +30,13 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.file.*;
 import org.bukkit.enchantments.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.*;
 import org.bukkit.potion.*;
@@ -43,9 +49,10 @@ import java.util.*;
 import static com.roughlyunderscore.enchs.parsers.PreparatoryParsers.*;
 import static com.roughlyunderscore.enchs.util.general.Utils.*;
 
-public final class UnderscoreEnchants extends JavaPlugin {
+public final class UnderscoreEnchants extends JavaPlugin implements UEnchantsAPI {
 
-	// The main method.
+
+	// The main class.
 	// A lot of stuff in a confined place, don't trip over something!
 
 	//<editor-fold desc="Earliest variables.">
@@ -495,11 +502,11 @@ public final class UnderscoreEnchants extends JavaPlugin {
 			.setDownloadLink(id)
 			.setDonationLink("https://donationalerts.com/r/zbll")
 			.onFail((senders, ex) -> {
-				System.out.println("Could not check for updates, make sure your connection is stable!");
+				Bukkit.getLogger().severe("Could not check for updates, make sure your connection is stable!");
 				Bukkit.getLogger().severe(ex.getMessage());
 			})
 			.onSuccess((senders, ex) -> {
-				System.out.println("Thanks for using UnderscoreEnchants!");
+				Bukkit.getLogger().finest("Thanks for using UnderscoreEnchants!");
 				Bukkit.getLogger().finest("Successfully checked for updates.");
 			})
 			.checkEveryXHours(getConfig().getInt("updater"))
@@ -816,5 +823,227 @@ public final class UnderscoreEnchants extends JavaPlugin {
 		writer.close();
 		if (isEnabled()) Bukkit.getPluginManager().disablePlugin(this);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// IMPLEMENTATION START
+
+	private ItemStack enchant0(ItemStack it, Enchantment en, int lvl) {
+		return Utils.enchant(it, en, lvl).getKey();
+	}
+
+	/**
+	 * Disenchants an ItemStack - removes an enchantment of this name
+	 *
+	 * @param item the item to disenchant
+	 * @param name the name of the enchantment
+	 * @return the disenchanted item
+	 * @throws IllegalArgumentException if the enchantment wasn't found or if the item doesn't have the given enchantment
+	 */
+	@Override
+	public ItemStack disenchant(ItemStack item, String name) throws IllegalArgumentException {
+		DetailedEnchantment enchantment = Utils.parseEnchantment(name, -1, true);
+		if (enchantment == null || enchantment.equals(UnderscoreEnchants.STATIC_EMPTY)) {
+			throw new IllegalArgumentException(String.format("The enchantment wasn't found! Name: %s", name));
+		}
+
+		item = disenchant(item, enchantment.getEnchantment());
+		return item;
+	}
+
+	/**
+	 * Disenchants an ItemStack - removes an enchantment, found by this namespaced key
+	 *
+	 * @param item the item to disenchant
+	 * @param key  the namespaced key of the enchantment
+	 * @return the disenchanted item
+	 * @throws IllegalArgumentException if the enchantment wasn't found or if the item doesn't have the given enchantment
+	 */
+	@Override
+	public ItemStack disenchant(ItemStack item, NamespacedKey key) throws IllegalArgumentException {
+		DetailedEnchantment ench = new DetailedEnchantment(key);
+		if (ench.getEnchantment() == null) {
+			throw new IllegalArgumentException(String.format("The enchantment wasn't found! Key: %s", key.getKey()));
+		}
+
+		item = disenchant(item, ench.getEnchantment());
+		return item;
+	}
+
+	/**
+	 * Disenchants an ItemStack - removes a given enchantment
+	 *
+	 * @param item the item to disenchant
+	 * @param ench the enchantment
+	 * @return the disenchanted item
+	 * @throws IllegalArgumentException if the item doesn't have the given enchantment
+	 */
+	@Override
+	public ItemStack disenchant(ItemStack item, Enchantment ench) throws IllegalArgumentException {
+		if (item == null || item.getType() == Material.AIR) return item;
+
+		ItemMeta meta = item.getItemMeta();
+
+		List<String> lore = new ArrayList<>();
+		if (meta.getLore() != null) lore = meta.getLore();
+
+		Set<Enchantment> enchantments = meta.getEnchants().keySet();
+		if (enchantments.isEmpty()) return item;
+		if (!enchantments.contains(ench)) throw new IllegalArgumentException("The item doesn't have the marked-for-removal enchantment!");
+
+		meta.removeEnchant(ench);
+		lore.removeIf(s -> s.toLowerCase().contains(Utils.getName(ench).toLowerCase()));
+
+		meta.setLore(lore);
+		item.setItemMeta(meta);
+
+		return item;
+	}
+
+	/**
+	 * Fully disenchants an ItemStack
+	 *
+	 * @param item the item to disenchant
+	 * @return the disenchanted item
+	 */
+	@Override
+	public ItemStack fullyDisenchant(ItemStack item) {
+		for (Enchantment ench : item.getEnchantments().keySet()) {
+			item = disenchant(item, ench);
+		}
+
+		return item;
+	}
+
+	@Override
+	public ItemStack enchant(ItemStack itemStack, String name, int level) throws IllegalArgumentException {
+		DetailedEnchantment enchantment = Utils.parseEnchantment(name, level, false);
+		if (enchantment == null || enchantment.equals(UnderscoreEnchants.STATIC_EMPTY)) {
+			throw new IllegalArgumentException(String.format("The enchantment wasn't found or the level is invalid! Name: %s, level: %d", name, level));
+		}
+
+		return enchant0(itemStack, enchantment.getEnchantment(), level);
+	}
+
+	@Override
+	public ItemStack enchant(ItemStack itemStack, NamespacedKey namespacedKey, int level) throws IllegalArgumentException {
+		DetailedEnchantment ench = new DetailedEnchantment(namespacedKey);
+		if (ench.getEnchantment() == null) {
+			throw new IllegalArgumentException(String.format("The enchantment wasn't found! Key: %s", namespacedKey.getKey()));
+		}
+
+		if (level < ench.getEnchantment().getStartLevel() || level > ench.getEnchantment().getMaxLevel()) {
+			throw new IllegalArgumentException(String.format("The enchantment's level is invalid! Key: %s", namespacedKey.getKey()));
+		}
+
+		return enchant0(itemStack, ench.getEnchantment(), level);
+	}
+
+	@Override
+	public ItemStack enchant(ItemStack itemStack, Enchantment enchantment, int level) throws IllegalArgumentException {
+		if (level < enchantment.getStartLevel() || level > enchantment.getMaxLevel()) {
+			throw new IllegalArgumentException(String.format("The enchantment's level is invalid! Name: %s", enchantment.getName()));
+		}
+
+		return enchant0(itemStack, enchantment, level);
+	}
+
+	@Override
+	public void enchant(Player player, EquipmentSlot equipmentSlot, String name, int level) throws IllegalArgumentException {
+		ItemStack itemStack = player.getInventory().getItem(equipmentSlot);
+		itemStack = enchant(itemStack, name, level);
+		if (itemStack != null) {
+			player.getInventory().setItem(equipmentSlot, itemStack);
+		}
+	}
+
+	@Override
+	public void enchant(Player player, EquipmentSlot equipmentSlot, NamespacedKey namespacedKey, int level) throws IllegalArgumentException {
+		ItemStack itemStack = player.getInventory().getItem(equipmentSlot);
+		itemStack = enchant(itemStack, namespacedKey, level);
+		if (itemStack != null) {
+			player.getInventory().setItem(equipmentSlot, itemStack);
+		}
+	}
+
+	@Override
+	public void enchant(Player player, EquipmentSlot equipmentSlot, Enchantment enchantment, int level) throws IllegalArgumentException {
+		ItemStack itemStack = player.getInventory().getItem(equipmentSlot);
+		itemStack = enchant(itemStack, enchantment, level);
+		if (itemStack != null) {
+			player.getInventory().setItem(equipmentSlot, itemStack);
+		}
+	}
+
+
+
+
+	@Override
+	public ItemStack enchantUnrestricted(ItemStack itemStack, String name, int level) throws IllegalArgumentException {
+		DetailedEnchantment enchantment = Utils.parseEnchantment(name, level, true);
+		if (enchantment.equals(UnderscoreEnchants.STATIC_EMPTY)) {
+			throw new IllegalArgumentException(String.format("The enchantment wasn't found or the level is invalid! Name: %s, level: %d", name, level));
+		}
+
+		return enchant0(itemStack, enchantment.getEnchantment(), level);
+	}
+
+	@Override
+	public ItemStack enchantUnrestricted(ItemStack itemStack, NamespacedKey namespacedKey, int level) throws IllegalArgumentException {
+		DetailedEnchantment ench = new DetailedEnchantment(namespacedKey);
+		if (ench.getEnchantment() == null) {
+			throw new IllegalArgumentException(String.format("The enchantment wasn't found! Key: %s", namespacedKey.getKey()));
+		}
+
+		return enchant0(itemStack, ench.getEnchantment(), level);
+	}
+
+	@Override
+	public ItemStack enchantUnrestricted(ItemStack itemStack, Enchantment enchantment, int level) {
+		return enchant0(itemStack, enchantment, level);
+	}
+
+	@Override
+	public void enchantUnrestricted(Player player, EquipmentSlot equipmentSlot, String name, int level) throws IllegalArgumentException {
+		ItemStack itemStack = player.getInventory().getItem(equipmentSlot);
+		itemStack = enchantUnrestricted(itemStack, name, level);
+		if (itemStack != null) {
+			player.getInventory().setItem(equipmentSlot, itemStack);
+		}
+	}
+
+	@Override
+	public void enchantUnrestricted(Player player, EquipmentSlot equipmentSlot, NamespacedKey namespacedKey, int level) throws IllegalArgumentException {
+		ItemStack itemStack = player.getInventory().getItem(equipmentSlot);
+		itemStack = enchantUnrestricted(itemStack, namespacedKey, level);
+		if (itemStack != null) {
+			player.getInventory().setItem(equipmentSlot, itemStack);
+		}
+	}
+
+	@Override
+	public void enchantUnrestricted(Player player, EquipmentSlot equipmentSlot, Enchantment enchantment, int level) {
+		ItemStack itemStack = player.getInventory().getItem(equipmentSlot);
+		itemStack = enchantUnrestricted(itemStack, enchantment, level);
+		if (itemStack != null) {
+			player.getInventory().setItem(equipmentSlot, itemStack);
+		}
+	}
+
+
+
+	// IMPLEMENTATION END
 
 }

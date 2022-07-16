@@ -16,6 +16,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.roughlyunderscore.enchs.util.general.PlayerUtils.*;
 import static com.roughlyunderscore.enchs.util.general.EntityUtils.*;
@@ -487,6 +488,7 @@ public class ActionParsers {
 		}
 
 		Bukkit.getScheduler().runTaskLater(plugin, () -> {
+
 			switch (split[0].toLowerCase(Locale.ROOT)) {
 				case "player-pdc-set" -> setPDC(player, NamespacedKey.fromString(split[1], plugin), split[2]);
 
@@ -650,6 +652,7 @@ public class ActionParsers {
 		}
 
 		Bukkit.getScheduler().runTaskLater(plugin, () -> {
+
 			switch (split[0].toLowerCase(Locale.ROOT)) {
 				case "victim-velocity" -> produceVelocity(victim, split);
 				case "damager-velocity" -> produceVelocity(damager, split);
@@ -927,6 +930,7 @@ public class ActionParsers {
 		}
 
 		Bukkit.getScheduler().runTaskLater(plugin, () -> {
+
 			switch (split[0].toLowerCase(Locale.ROOT)) {
 				case "player-velocity" -> produceVelocity(player, split);
 

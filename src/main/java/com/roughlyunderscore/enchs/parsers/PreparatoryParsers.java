@@ -123,13 +123,13 @@ public class PreparatoryParsers {
 	 * @return the result of the checks - true if none fail, false otherwise
 	 */
 	public boolean validateActivation(UnderscoreEnchants plugin, Event event, Player player, EnchantmentLevel level, NamespacedKey key, List<String> conditions) {
-		// 1) Checking if the event is cancelled.
-		if (event instanceof Cancellable cancellable && cancellable.isCancelled()) return false;
+		// 0) Checking if the event is cancelled.
+		if (event instanceof Cancellable ca && ca.isCancelled()) return false;
 
-		// 2) Checking if the player has the enchantment enabled.
+		// 1) Checking if the player has the enchantment enabled.
 		if (!Utils.isEnabled(player, key)) return false;
 
-		// 3) Checking if the player is subject to cooldown with this enchantment.
+		// 2) Checking if the player is subject to cooldown with this enchantment.
 		UUID uuid = player.getUniqueId();
 		boolean result = true;
 		if (!plugin.cooldowns.isEmpty()) {
@@ -140,10 +140,10 @@ public class PreparatoryParsers {
 		}
 		if (!result) return false;
 
-		// 4) Checking if the randomly generated chance is applicable to the EnchantmentLevel.
+		// 3) Checking if the randomly generated chance is applicable to the EnchantmentLevel.
 		if (Math.random() * 100 > level.getChance()) return false;
 
-		// 5) Parsing and checking for the conditions to match.
+		// 4) Parsing and checking for the conditions to match.
 		boolean passed = true;
 		if (conditions != null && !conditions.isEmpty()) {
 			for (String condition : conditions) {
@@ -156,7 +156,7 @@ public class PreparatoryParsers {
 			}
 		}
 
-		// 6) Final decision
+		// 5) Final decision
 		return passed;
 	}
 
